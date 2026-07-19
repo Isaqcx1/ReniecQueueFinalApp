@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Image } from "react-native";
 
 import {
 
@@ -10,7 +11,7 @@ import {
 
     TouchableOpacity,
 
-    SafeAreaView
+    SafeAreaView,
 
 } from "react-native";
 
@@ -24,47 +25,35 @@ import Button from "../components/Button";
 
 import Colors from "../styles/colors";
 
-export default function LoginScreen(){
+export default function LoginScreen() {
 
-    const [dni,setDni]=useState("");
+    const [dni, setDni] = useState("");
 
-    const [password,setPassword]=useState("");
+    const [password, setPassword] = useState("");
 
-    const [showPassword,setShowPassword]=useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    return(
+    return (
 
         <SafeAreaView style={styles.container}>
 
             <LinearGradient
 
-                colors={[Colors.primary,Colors.secondary]}
+                colors={[Colors.primary, Colors.secondary]}
 
                 style={styles.header}
 
             >
 
-                <Ionicons
-
-                    name="person-circle"
-
-                    size={85}
-
-                    color="white"
-
+                <Image
+                    source={require("../assets/logor.png")}
+                    style={styles.logo}
+                    resizeMode="contain"
                 />
 
-                <Text style={styles.title}>
+                
 
-                    RENIEC Queue
-
-                </Text>
-
-                <Text style={styles.subtitle}>
-
-                    Tu turno, sin filas.
-
-                </Text>
+                
 
             </LinearGradient>
 
@@ -114,13 +103,13 @@ export default function LoginScreen(){
 
                         style={styles.eye}
 
-                        onPress={()=>setShowPassword(!showPassword)}
+                        onPress={() => setShowPassword(!showPassword)}
 
                     >
 
                         <Ionicons
 
-                            name={showPassword?"eye":"eye-off"}
+                            name={showPassword ? "eye" : "eye-off"}
 
                             size={22}
 
@@ -146,7 +135,7 @@ export default function LoginScreen(){
 
                     title="Ingresar"
 
-                    onPress={()=>console.log("Login")}
+                    onPress={() => console.log("Login")}
 
                 />
 
@@ -168,124 +157,137 @@ export default function LoginScreen(){
 
 }
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
 
-container:{
+    container: {
 
-flex:1,
+        flex: 1,
 
-backgroundColor:Colors.background
+        backgroundColor: Colors.background
 
-},
+    },
 
-header:{
+    header: {
 
-height:280,
+        height: 300,
 
-justifyContent:"center",
+        justifyContent: "center",
 
-alignItems:"center",
+        alignItems: "center",
 
-borderBottomLeftRadius:35,
+        borderBottomLeftRadius: 45,
 
-borderBottomRightRadius:35
+        borderBottomRightRadius: 45,
 
-},
+        
 
-title:{
 
-color:"white",
+    },
 
-fontSize:34,
+    title: {
 
-fontWeight:"bold",
+        color: "white",
 
-marginTop:10
+        fontSize: 34,
 
-},
+        fontWeight: "bold",
 
-subtitle:{
+        marginTop: 10
 
-color:"white",
+    },
 
-fontSize:16,
+    subtitle: {
 
-marginTop:5
+        color: "white",
 
-},
+        fontSize: 16,
 
-card:{
+        marginTop: 5
 
-backgroundColor:"white",
+    },
 
-marginHorizontal:20,
+    card: {
 
-marginTop:-40,
+        backgroundColor: "white",
 
-borderRadius:25,
+        marginHorizontal: 20,
 
-padding:25,
+        marginTop: -40,
 
-elevation:10
+        borderRadius: 25,
 
-},
+        padding: 25,
 
-loginText:{
+        elevation: 10
 
-fontSize:28,
+    },
 
-fontWeight:"bold",
+    loginText: {
 
-color:Colors.text
+        fontSize: 28,
 
-},
+        fontWeight: "bold",
 
-description:{
+        color: Colors.text
 
-marginTop:5,
+    },
 
-marginBottom:25,
+    description: {
 
-color:Colors.gray
+        marginTop: 5,
 
-},
+        marginBottom: 25,
 
-passwordContainer:{
+        color: Colors.gray
 
-position:"relative"
+    },
 
-},
+    passwordContainer: {
 
-eye:{
+        position: "relative"
 
-position:"absolute",
+    },
 
-right:15,
+    eye: {
 
-top:16
+        position: "absolute",
 
-},
+        right: 15,
 
-forgot:{
+        top: 16
 
-textAlign:"right",
+    },
 
-color:Colors.primary,
+    forgot: {
 
-marginBottom:15
+        textAlign: "right",
 
-},
+        color: Colors.primary,
 
-register:{
+        marginBottom: 15
 
-textAlign:"center",
+    },
 
-marginTop:25,
+    register: {
 
-color:Colors.primary,
+        textAlign: "center",
 
-fontWeight:"600"
+        marginTop: 25,
 
-}
+        color: Colors.primary,
+
+        fontWeight: "600"
+
+    },
+
+    logo: {
+
+        width: 325,
+
+        height: 325,
+
+        marginBottom: 10
+
+    },
 
 });
