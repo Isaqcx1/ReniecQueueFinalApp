@@ -1,18 +1,13 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Image } from "react-native";
 
 import {
-
     View,
-
     Text,
-
     StyleSheet,
-
     TouchableOpacity,
-
     SafeAreaView,
-
+    Animated,
 } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -33,6 +28,85 @@ export default function LoginScreen() {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const [dniMessage, setDniMessage] = useState("");
+    const [dniStatus, setDniStatus] = useState<
+        "success" | "error" | "loading" | ""
+    >("");
+    const [showPasswordField, setShowPasswordField] = useState(false);
+
+
+    const [showRegister, setShowRegister] = useState(false);
+
+
+
+    const verificarDni = (value: string) => {
+        fadeAnim.setValue(0);
+
+        setDni(value);
+
+        setShowPasswordField(false);
+        setShowRegister(false);
+        setDniMessage("");
+        setDniStatus("");
+
+        if (value.length !== 8) return;
+
+        setDniStatus("loading");
+        setDniMessage("Verificando DNI...");
+
+        setTimeout(() => {
+
+            const registrados = [
+                "74258136",
+                "71582469",
+                "78451236",
+                "73698521",
+            ];
+
+            const reniec = [
+                ...registrados,
+                "75982413",
+                "74856329",
+                "76325841",
+                "79415236",
+                "72156384",
+                "73512469",
+            ];
+
+            if (!reniec.includes(value)) {
+                setDniStatus("error");
+                setDniMessage("DNI no encontrado en RENIEC.");
+                return;
+            }
+
+            if (registrados.includes(value)) {
+                setDniStatus("success");
+                setDniMessage("DNI válido. Bienvenido nuevamente.");
+                setShowPasswordField(true);
+
+                Animated.timing(fadeAnim, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }).start();
+            } else {
+                setDniStatus("success");
+                setDniMessage("DNI válido. Debe registrarse.");
+                setShowRegister(true);
+
+                Animated.timing(fadeAnim, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }).start();
+            }
+
+        }, 1000);
+
+    };
+
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
     return (
 
         <SafeAreaView style={styles.container}>
@@ -51,9 +125,9 @@ export default function LoginScreen() {
                     resizeMode="contain"
                 />
 
-                
 
-                
+
+
 
             </LinearGradient>
 
@@ -72,82 +146,104 @@ export default function LoginScreen() {
                 </Text>
 
                 <Input
-
                     placeholder="DNI"
-
                     keyboardType="numeric"
-
                     value={dni}
-
-                    onChangeText={setDni}
-
+                    onChangeText={verificarDni}
                     maxLength={8}
-
                 />
 
-                <View style={styles.passwordContainer}>
+                {dniMessage !== "" && (
 
-                    <Input
+                    <Text
+                        style={[
+                            styles.message,
+                            dniStatus === "success" && styles.success,
+                            dniStatus === "error" && styles.error,
+                            dniStatus === "loading" && styles.loading,
+                        ]}
+                    >
+                        {dniMessage}
+                    </Text>
 
-                        placeholder="Contraseña"
+                )}
 
-                        secureTextEntry={!showPassword}
+                {showPasswordField && (
 
-                        value={password}
-
-                        onChangeText={setPassword}
-
-                    />
-
-                    <TouchableOpacity
-
-                        style={styles.eye}
-
-                        onPress={() => setShowPassword(!showPassword)}
-
+                    <Animated.View
+                        style={{
+                            opacity: fadeAnim,
+                            transform: [
+                                {
+                                    translateY: fadeAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [-20, 0],
+                                    }),
+                                },
+                            ],
+                        }}
                     >
 
-                        <Ionicons
+                        <View style={styles.passwordContainer}>
+                            <Input
+                                placeholder="Contraseña"
+                                secureTextEntry={!showPassword}
+                                value={password}
+                                onChangeText={setPassword}
+                            />
 
-                            name={showPassword ? "eye" : "eye-off"}
+                            <TouchableOpacity
+                                style={styles.eye}
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
+                                <Ionicons
+                                    name={showPassword ? "eye" : "eye-off"}
+                                    size={22}
+                                    color={Colors.gray}
+                                />
+                            </TouchableOpacity>
+                        </View>
 
-                            size={22}
+                        <TouchableOpacity>
+                            <Text style={styles.forgot}>
+                                ¿Olvidaste tu contraseña?
+                            </Text>
+                        </TouchableOpacity>
 
-                            color={Colors.gray}
-
+                        <Button
+                            title="Ingresar"
+                            onPress={() => console.log("Login")}
                         />
 
-                    </TouchableOpacity>
+                    </Animated.View>
 
-                </View>
+                )}
 
-                <TouchableOpacity>
+                {showRegister && (
 
-                    <Text style={styles.forgot}>
+                    <Animated.View
+                        style={{
+                            opacity: fadeAnim,
+                            transform: [
+                                {
+                                    translateY: fadeAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [-20, 0],
+                                    }),
+                                },
+                            ],
+                        }}
+                    >
 
-                        ¿Olvidaste tu contraseña?
+                        <TouchableOpacity>
+                            <Text style={styles.register}>
+                                Registrarse
+                            </Text>
+                        </TouchableOpacity>
 
-                    </Text>
+                    </Animated.View>
 
-                </TouchableOpacity>
-
-                <Button
-
-                    title="Ingresar"
-
-                    onPress={() => console.log("Login")}
-
-                />
-
-                <TouchableOpacity>
-
-                    <Text style={styles.register}>
-
-                        ¿No tienes cuenta? Registrarse
-
-                    </Text>
-
-                </TouchableOpacity>
+                )}
 
             </View>
 
@@ -179,7 +275,7 @@ const styles = StyleSheet.create({
 
         borderBottomRightRadius: 45,
 
-        
+
 
 
     },
@@ -288,6 +384,25 @@ const styles = StyleSheet.create({
 
         marginBottom: 10
 
+    },
+
+    message: {
+        marginTop: -12,
+        marginBottom: 18,
+        fontSize: 14,
+        fontWeight: "600",
+    },
+
+    success: {
+        color: Colors.success,
+    },
+
+    error: {
+        color: Colors.danger,
+    },
+
+    loading: {
+        color: Colors.info,
     },
 
 });

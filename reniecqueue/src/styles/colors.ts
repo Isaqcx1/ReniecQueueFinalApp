@@ -16,7 +16,11 @@ const Colors = {
 
     placeholder: "#9CA3AF",
 
-    danger: "#EF4444"
+    danger: "#EF4444",
+    success: "#22C55E",
+    info: "#3B82F6",
+
+
 
 };
 
