@@ -20,7 +20,11 @@ import Button from "../components/Button";
 
 import Colors from "../styles/colors";
 
+import { useNavigation } from "@react-navigation/native";
+
 export default function LoginScreen() {
+
+    const navigation = useNavigation<any>();
 
     const [dni, setDni] = useState("");
 
@@ -235,7 +239,13 @@ export default function LoginScreen() {
                         }}
                     >
 
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() =>
+                                navigation.navigate("Register", {
+                                    dni: dni,
+                                })
+                            }
+                        >
                             <Text style={styles.register}>
                                 Registrarse
                             </Text>
