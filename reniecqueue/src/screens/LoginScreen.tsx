@@ -65,6 +65,7 @@ export default function LoginScreen() {
                 "71582469",
                 "78451236",
                 "73698521",
+                "73049855"
             ];
 
             const reniec = [
@@ -215,9 +216,24 @@ export default function LoginScreen() {
                         </TouchableOpacity>
 
                         <Button
-                            title="Ingresar"
-                            onPress={() => console.log("Login")}
-                        />
+    title="Ingresar"
+    onPress={() => {
+
+        if (
+            dni === "73049855" &&
+            password === "73049855"
+        ) {
+
+            navigation.replace("Home");
+
+        } else {
+
+            alert("DNI o contraseña incorrectos.");
+
+        }
+
+    }}
+/>
 
                     </Animated.View>
 
