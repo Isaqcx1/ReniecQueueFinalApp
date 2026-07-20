@@ -213,7 +213,25 @@ export default function SedesScreen() {
 
         activeOpacity={0.9}
 
-        onPress={() => setSeleccionada(item.id)}
+        onPress={() => {
+
+    setSeleccionada(item.id);
+
+    navigation.navigate("DetalleSede", {
+
+        sede: {
+
+            ...item,
+
+            latitud: -12.0913,
+
+            longitud: -77.0465,
+
+        },
+
+    });
+
+}}
 
         style={[
             styles.card,

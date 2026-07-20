@@ -4,6 +4,7 @@ import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import SedesScreen from "../screens/SedesScreen";
+import DetalleSedeScreen from "../screens/DetalleSedeScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -38,6 +39,10 @@ export default function AppNavigator() {
                     name="Sedes"
                     component={SedesScreen}
                 />
+                <Stack.Screen
+    name="DetalleSede"
+    component={DetalleSedeScreen}
+/>
 
             </Stack.Navigator>
 
