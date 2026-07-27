@@ -21,7 +21,7 @@ import ProfileMenu from "../components/ProfileMenu";
 const sedes = [
 
     {
-        id: "1",
+        id: 1,
         nombre: "RENIEC San Isidro",
         direccion: "Av. Javier Prado Este 1890",
         distrito: "San Isidro",
@@ -29,7 +29,7 @@ const sedes = [
     },
 
     {
-        id: "2",
+        id: 2,
         nombre: "RENIEC San Miguel",
         direccion: "Av. La Marina 2450",
         distrito: "San Miguel",
@@ -37,7 +37,7 @@ const sedes = [
     },
 
     {
-        id: "3",
+        id: 3,
         nombre: "RENIEC Miraflores",
         direccion: "Av. Benavides 850",
         distrito: "Miraflores",
@@ -45,7 +45,7 @@ const sedes = [
     },
 
     {
-        id: "4",
+        id: 4,
         nombre: "RENIEC Los Olivos",
         direccion: "Av. Universitaria Norte 3200",
         distrito: "Los Olivos",
@@ -72,7 +72,7 @@ export default function SedesScreen() {
 
     const [filtro, setFiltro] = useState("Todos");
 
-    const [seleccionada, setSeleccionada] = useState("");
+    const [seleccionada, setSeleccionada] = useState<number | null>(null);
 
     const sedesFiltradas = useMemo(() => {
 
@@ -205,7 +205,7 @@ export default function SedesScreen() {
 
                 data={sedesFiltradas}
 
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
 
                 renderItem={({ item }) => (
 

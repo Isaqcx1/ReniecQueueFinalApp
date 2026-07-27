@@ -5,6 +5,7 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import SedesScreen from "../screens/SedesScreen";
 import DetalleSedeScreen from "../screens/DetalleSedeScreen";
+import TramiteScreen from "../screens/TramitesScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -40,9 +41,13 @@ export default function AppNavigator() {
                     component={SedesScreen}
                 />
                 <Stack.Screen
-    name="DetalleSede"
-    component={DetalleSedeScreen}
-/>
+                    name="DetalleSede"
+                    component={DetalleSedeScreen}
+                />
+                <Stack.Screen
+                    name="Tramites"
+                    component={TramiteScreen}
+                />
 
             </Stack.Navigator>
 
