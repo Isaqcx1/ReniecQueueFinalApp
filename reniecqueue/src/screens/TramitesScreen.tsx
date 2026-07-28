@@ -177,16 +177,19 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        height: 140,
+        height: 120,
+
         justifyContent: "center",
         alignItems: "center",
-        borderBottomLeftRadius: 35,
-        borderBottomRightRadius: 35,
+        paddingHorizontal: 20,
+        elevation: 8,
     },
 
     logo: {
-        width: 240,
-        height: 120,
+
+        width: 250,
+        height: 200,
+
     },
 
     profile: {
