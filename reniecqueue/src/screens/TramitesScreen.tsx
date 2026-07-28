@@ -17,6 +17,7 @@ import ProfileMenu from "../components/ProfileMenu";
 import Input from "../components/Input";
 import { tramites, Tramite } from "../data/tramitesData";
 
+
 export default function TramitesScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
