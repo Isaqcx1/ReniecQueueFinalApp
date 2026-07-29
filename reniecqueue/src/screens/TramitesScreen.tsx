@@ -31,15 +31,15 @@ export default function TramitesScreen() {
 
     return tramites.filter((tramite) =>
 
-        tramite.idSede === sede.id &&
+      tramite.idSede === sede.id &&
 
-        tramite.nombre
-            .toLowerCase()
-            .includes(buscar.toLowerCase())
+      tramite.nombre
+        .toLowerCase()
+        .includes(buscar.toLowerCase())
 
     );
 
-}, [buscar, sede]);
+  }, [buscar, sede]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,6 +58,7 @@ export default function TramitesScreen() {
         data={tramitesFiltrados}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <>
             <View style={styles.sedeCard}>
@@ -172,154 +173,156 @@ export default function TramitesScreen() {
 }
 const styles = StyleSheet.create({
 
-    container: {
-        flex: 1,
-        backgroundColor: Colors.background,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
 
-    header: {
-        height: 120,
+  header: {
+    height: 120,
 
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        elevation: 8,
-    },
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    elevation: 8,
+  },
 
-    logo: {
+  logo: {
 
-        width: 250,
-        height: 200,
+    width: 250,
+    height: 200,
 
-    },
+  },
 
-    profile: {
-        position: "absolute",
-        right: 20,
-        top: 50,
-    },
+  profile: {
+    position: "absolute",
+    right: 20,
+    top: 50,
+  },
 
-    sedeCard: {
-        backgroundColor: "#fff",
-        marginHorizontal: 18,
-        marginTop: 18,
-        borderRadius: 18,
-        padding: 18,
-        flexDirection: "row",
-        alignItems: "center",
-        elevation: 6,
-    },
+  sedeCard: {
+    backgroundColor: "#fff",
+    marginHorizontal: 18,
+    marginTop: 18,
+    borderRadius: 18,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 6,
+  },
 
-    sedeIcon: {
-        width: 55,
-        height: 55,
-        borderRadius: 28,
-        backgroundColor: "#EAF4FF",
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 15,
-    },
+  sedeIcon: {
+    width: 55,
+    height: 55,
+    borderRadius: 28,
+    backgroundColor: "#EAF4FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
 
-    sedeNombre: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: Colors.text,
-    },
+  sedeNombre: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors.text,
+  },
 
-    sedeDireccion: {
-        marginTop: 4,
-        color: Colors.gray,
-        fontSize: 14,
-    },
+  sedeDireccion: {
+    marginTop: 4,
+    color: Colors.gray,
+    fontSize: 14,
+  },
 
-    title: {
-        marginHorizontal: 20,
-        marginTop: 25,
-        fontSize: 24,
-        fontWeight: "bold",
-        color: Colors.text,
-    },
+  title: {
+    marginHorizontal: 20,
+    marginTop: 25,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: Colors.text,
+  },
 
-    subtitle: {
-        marginHorizontal: 20,
-        marginTop: 5,
-        marginBottom: 18,
-        color: Colors.gray,
-        fontSize: 15,
-    },
+  subtitle: {
+    marginHorizontal: 20,
+    marginTop: 5,
+    marginBottom: 18,
+    color: Colors.gray,
+    fontSize: 15,
+  },
 
-    card: {
-        backgroundColor: "#fff",
-        marginHorizontal: 18,
-        marginBottom: 15,
-        borderRadius: 18,
-        padding: 18,
-        flexDirection: "row",
-        alignItems: "center",
-        elevation: 5,
-        borderWidth: 2,
-        borderColor: "transparent",
-    },
+  card: {
+    backgroundColor: "#fff",
+    marginHorizontal: 18,
+    marginBottom: 15,
+    borderRadius: 18,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 5,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
 
-    cardSelected: {
-        backgroundColor: Colors.primary,
-        borderColor: Colors.secondary,
-    },
+  cardSelected: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.secondary,
+  },
 
-    iconContainer: {
-        width: 55,
-        height: 55,
-        borderRadius: 28,
-        backgroundColor: "#EAF4FF",
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 15,
-    },
+  iconContainer: {
+    width: 55,
+    height: 55,
+    borderRadius: 28,
+    backgroundColor: "#EAF4FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
 
-    info: {
-        flex: 1,
-    },
+  info: {
+    flex: 1,
+  },
 
-    nombre: {
-        fontSize: 17,
-        fontWeight: "bold",
-        color: Colors.text,
-    },
+  nombre: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: Colors.text,
+  },
 
-    descripcion: {
-        marginTop: 4,
-        fontSize: 14,
-        color: Colors.gray,
-        lineHeight: 20,
-    },
+  descripcion: {
+    marginTop: 4,
+    fontSize: 14,
+    color: Colors.gray,
+    lineHeight: 20,
+  },
 
-    nombreSeleccionado: {
-        color: "#fff",
-    },
+  nombreSeleccionado: {
+    color: "#fff",
+  },
 
-    descripcionSeleccionada: {
-        color: "#E8F4FF",
-    },
+  descripcionSeleccionada: {
+    color: "#E8F4FF",
+  },
 
-    button: {
-        marginHorizontal: 18,
-        marginTop: 10,
-        marginBottom: 95,
-    },
+  button: {
+    marginHorizontal: 18,
+    marginTop: 10,
+    marginBottom: 20,
+},
+  gradient: {
+    height: 56,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
 
-    gradient: {
-        height: 56,
-        borderRadius: 18,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
-    },
-
-    buttonText: {
-        color: "#fff",
-        fontSize: 18,
-        fontWeight: "bold",
-        marginRight: 10,
-    },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  listContent: {
+    paddingBottom: 150,
+},
 
 });

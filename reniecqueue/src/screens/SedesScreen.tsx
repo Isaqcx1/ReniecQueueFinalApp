@@ -17,52 +17,13 @@ import { useNavigation } from "@react-navigation/native";
 import Colors from "../styles/colors";
 import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
+import { sedes, filtros, Sede } from "../data/sedesData";
 
-const sedes = [
 
-    {
-        id: 1,
-        nombre: "RENIEC San Isidro",
-        direccion: "Av. Javier Prado Este 1890",
-        distrito: "San Isidro",
-        imagen: require("../assets/filar.png"),
-    },
-
-    {
-        id: 2,
-        nombre: "RENIEC San Miguel",
-        direccion: "Av. La Marina 2450",
-        distrito: "San Miguel",
-        imagen: require("../assets/filar.png"),
-    },
-
-    {
-        id: 3,
-        nombre: "RENIEC Miraflores",
-        direccion: "Av. Benavides 850",
-        distrito: "Miraflores",
-        imagen: require("../assets/filar.png"),
-    },
-
-    {
-        id: 4,
-        nombre: "RENIEC Los Olivos",
-        direccion: "Av. Universitaria Norte 3200",
-        distrito: "Los Olivos",
-        imagen: require("../assets/filar.png"),
-    },
-
-];
-
-const filtros = [
-    "Todos",
-    "San Isidro",
-    "San Miguel",
-    "Miraflores",
-    "Los Olivos",
-];
 
 export default function SedesScreen() {
+
+
 
     const navigation = useNavigation<any>();
 
@@ -72,7 +33,7 @@ export default function SedesScreen() {
 
     const [filtro, setFiltro] = useState("Todos");
 
-    const [seleccionada, setSeleccionada] = useState<number | null>(null);
+    const [seleccionada, setSeleccionada] = useState<Sede | null>(null);
 
     const sedesFiltradas = useMemo(() => {
 
@@ -177,7 +138,7 @@ export default function SedesScreen() {
                             style={[
                                 styles.filterText,
                                 filtro === item &&
-                                    styles.filterTextActive,
+                                styles.filterTextActive,
                             ]}
                         >
 
@@ -209,125 +170,125 @@ export default function SedesScreen() {
 
                 renderItem={({ item }) => (
 
-    <TouchableOpacity
+                    <TouchableOpacity
 
-        activeOpacity={0.9}
+                        activeOpacity={0.9}
 
-        onPress={() => {
+                        onPress={() => {
 
-    setSeleccionada(item.id);
+                            seleccionada?.id === item.id;
 
-    navigation.navigate("DetalleSede", {
+                            navigation.navigate("DetalleSede", {
 
-        sede: {
+                                sede: {
 
-            ...item,
+                                    ...item,
 
-            latitud: -12.0913,
+                                    latitud: -12.0913,
 
-            longitud: -77.0465,
+                                    longitud: -77.0465,
 
-        },
+                                },
 
-    });
+                            });
 
-}}
+                        }}
 
-        style={[
-            styles.card,
-            seleccionada === item.id &&
-                styles.cardSelected,
-        ]}
+                        style={[
+                            styles.card,
+                            seleccionada?.id === item.id &&
+                            styles.cardSelected,
+                        ]}
 
-    >
+                    >
 
-        <Image
-            source={item.imagen}
-            style={styles.cardImage}
-            resizeMode="cover"
-        />
+                        <Image
+                            source={item.imagen}
+                            style={styles.cardImage}
+                            resizeMode="cover"
+                        />
 
-        <View style={styles.cardBody}>
+                        <View style={styles.cardBody}>
 
-            <Text style={styles.cardTitle}>
-                {item.nombre}
-            </Text>
+                            <Text style={styles.cardTitle}>
+                                {item.nombre}
+                            </Text>
 
-            <View style={styles.locationRow}>
+                            <View style={styles.locationRow}>
 
-                <Ionicons
-                    name="location"
-                    size={18}
-                    color={Colors.primary}
-                />
+                                <Ionicons
+                                    name="location"
+                                    size={18}
+                                    color={Colors.primary}
+                                />
 
-                <Text style={styles.cardAddress}>
-                    {item.direccion}
-                </Text>
+                                <Text style={styles.cardAddress}>
+                                    {item.direccion}
+                                </Text>
 
-            </View>
+                            </View>
 
-            {seleccionada === item.id && (
+                            {seleccionada?.id === item.id && (
 
-                <View style={styles.selectedBox}>
+                                <View style={styles.selectedBox}>
 
-                    <Ionicons
-                        name="checkmark-circle"
-                        size={20}
-                        color="#fff"
-                    />
+                                    <Ionicons
+                                        name="checkmark-circle"
+                                        size={20}
+                                        color="#fff"
+                                    />
 
-                    <Text style={styles.selectedText}>
-                        Sede seleccionada
-                    </Text>
+                                    <Text style={styles.selectedText}>
+                                        Sede seleccionada
+                                    </Text>
 
-                </View>
+                                </View>
 
-            )}
+                            )}
 
-        </View>
+                        </View>
 
-    </TouchableOpacity>
+                    </TouchableOpacity>
 
-)}
+                )}
 
-contentContainerStyle={styles.cardsContainer}
+                contentContainerStyle={styles.cardsContainer}
 
-/>
+            />
 
-<BottomNav active="Sedes" />
+            <BottomNav active="Sedes" />
 
-<ProfileMenu
+            <ProfileMenu
 
-    visible={menuVisible}
+                visible={menuVisible}
 
-    onClose={() => setMenuVisible(false)}
+                onClose={() => setMenuVisible(false)}
 
-    onProfile={() => {
+                onProfile={() => {
 
-        setMenuVisible(false);
+                    setMenuVisible(false);
 
-    }}
+                }}
 
-    onSettings={() => {
+                onSettings={() => {
 
-        setMenuVisible(false);
+                    setMenuVisible(false);
 
-    }}
+                }}
 
-    onLogout={() => {
+                onLogout={() => {
 
-        setMenuVisible(false);
+                    setMenuVisible(false);
 
-        navigation.replace("Login");
+                    navigation.replace("Login");
 
-    }}
+                }}
 
-/>
+            />
 
-</SafeAreaView>
+        </SafeAreaView>
 
-);
+    );
 
 }
 
@@ -422,143 +383,143 @@ const styles = StyleSheet.create({
     },
 
     filter: {
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    marginRight: 10,
-    elevation: 2,
+        backgroundColor: "#fff",
+        borderRadius: 18,
+        paddingHorizontal: 16,
+        paddingVertical: 9,
+        marginRight: 10,
+        elevation: 2,
 
-    
-    alignSelf: "flex-start",
-    minWidth: 0,
-},
 
-filterActive: {
-    backgroundColor: Colors.primary,
-},
+        alignSelf: "flex-start",
+        minWidth: 0,
+    },
 
-filterText: {
-    color: Colors.gray,
-    fontWeight: "600",
-    fontSize: 14,
-    textAlign: "center",
-},
+    filterActive: {
+        backgroundColor: Colors.primary,
+    },
 
-filterTextActive: {
-    color: "#fff",
-    textAlign: "center",
-},
+    filterText: {
+        color: Colors.gray,
+        fontWeight: "600",
+        fontSize: 14,
+        textAlign: "center",
+    },
+
+    filterTextActive: {
+        color: "#fff",
+        textAlign: "center",
+    },
     cardsContainer: {
 
-    paddingHorizontal: 15,
+        paddingHorizontal: 15,
 
-    paddingBottom: 230,
+        paddingBottom: 230,
 
-},
+    },
 
-card: {
+    card: {
 
-    width: 300,
+        width: 300,
 
-    backgroundColor: "#fff",
+        backgroundColor: "#fff",
 
-    borderRadius: 25,
+        borderRadius: 25,
 
-    marginHorizontal: 10,
+        marginHorizontal: 10,
 
-    elevation: 6,
+        elevation: 6,
 
-    overflow: "hidden",
+        overflow: "hidden",
 
-    borderWidth: 2,
+        borderWidth: 2,
 
-    borderColor: "transparent",
+        borderColor: "transparent",
 
-},
+    },
 
-cardSelected: {
+    cardSelected: {
 
-    borderColor: Colors.primary,
+        borderColor: Colors.primary,
 
-},
+    },
 
-cardImage: {
+    cardImage: {
 
-    width: "100%",
+        width: "100%",
 
-    height: 180,
+        height: 180,
 
-},
+    },
 
-cardBody: {
+    cardBody: {
 
-    padding: 18,
+        padding: 18,
 
-},
+    },
 
-cardTitle: {
+    cardTitle: {
 
-    fontSize: 22,
+        fontSize: 22,
 
-    fontWeight: "bold",
+        fontWeight: "bold",
 
-    color: Colors.text,
+        color: Colors.text,
 
-},
+    },
 
-locationRow: {
+    locationRow: {
 
-    flexDirection: "row",
+        flexDirection: "row",
 
-    alignItems: "center",
+        alignItems: "center",
 
-    marginTop: 12,
+        marginTop: 12,
 
-},
+    },
 
-cardAddress: {
+    cardAddress: {
 
-    flex: 1,
+        flex: 1,
 
-    marginLeft: 8,
+        marginLeft: 8,
 
-    color: Colors.gray,
+        color: Colors.gray,
 
-    fontSize: 15,
+        fontSize: 15,
 
-    lineHeight: 22,
+        lineHeight: 22,
 
-},
+    },
 
-selectedBox: {
+    selectedBox: {
 
-    marginTop: 20,
+        marginTop: 20,
 
-    backgroundColor: Colors.primary,
+        backgroundColor: Colors.primary,
 
-    borderRadius: 15,
+        borderRadius: 15,
 
-    flexDirection: "row",
+        flexDirection: "row",
 
-    justifyContent: "center",
+        justifyContent: "center",
 
-    alignItems: "center",
+        alignItems: "center",
 
-    paddingVertical: 10,
+        paddingVertical: 10,
 
-},
+    },
 
-selectedText: {
+    selectedText: {
 
-    color: "#fff",
+        color: "#fff",
 
-    marginLeft: 8,
+        marginLeft: 8,
 
-    fontWeight: "bold",
+        fontWeight: "bold",
 
-    fontSize: 15,
+        fontSize: 15,
 
-},
+    },
 
 });

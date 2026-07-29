@@ -26,6 +26,7 @@ import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
 
 import { requisitos } from "../data/requisitosData";
+import { generarPDF } from "../services/pdfService";
 
 export default function RequisitosScreen() {
 
@@ -44,6 +45,8 @@ export default function RequisitosScreen() {
         );
 
     }, [tramite]);
+
+    
 
     if (!informacion) {
 
@@ -66,6 +69,18 @@ export default function RequisitosScreen() {
         );
 
     }
+
+    const descargarPDF = async () => {
+
+    await generarPDF(
+        sede,
+        tramite,
+        informacion
+    );
+
+};
+
+    
 
     return (
 
@@ -365,13 +380,7 @@ export default function RequisitosScreen() {
     <TouchableOpacity
         activeOpacity={0.9}
         style={styles.button}
-        onPress={() =>
-            navigation.navigate("DescargarRequisitos", {
-                sede,
-                tramite,
-                informacion,
-            })
-        }
+        onPress={descargarPDF}
     >
 
         <LinearGradient

@@ -9,6 +9,7 @@ import TramiteScreen from "../screens/TramitesScreen";
 import RequisitosScreen from "../screens/RequisitosScreen";
 
 
+
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
@@ -54,6 +55,7 @@ export default function AppNavigator() {
                     component={RequisitosScreen}
                     options={{ headerShown: false }}
                 />
+                
 
             </Stack.Navigator>
 
