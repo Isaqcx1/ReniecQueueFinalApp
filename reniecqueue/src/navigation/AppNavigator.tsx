@@ -7,6 +7,8 @@ import SedesScreen from "../screens/SedesScreen";
 import DetalleSedeScreen from "../screens/DetalleSedeScreen";
 import TramiteScreen from "../screens/TramitesScreen";
 import RequisitosScreen from "../screens/RequisitosScreen";
+import TurnoScreen from "../screens/TurnoScreen"
+import { TurnoProvider } from "../screens/TurnoContext";
 
 
 
@@ -16,11 +18,13 @@ export default function AppNavigator() {
 
     return (
 
+    <TurnoProvider>
+
         <NavigationContainer>
 
             <Stack.Navigator
                 screenOptions={{
-                    headerShown: false
+                    headerShown: false,
                 }}
             >
 
@@ -38,29 +42,38 @@ export default function AppNavigator() {
                     name="Home"
                     component={HomeScreen}
                 />
+
                 <Stack.Screen
                     name="Sedes"
                     component={SedesScreen}
                 />
+
                 <Stack.Screen
                     name="DetalleSede"
                     component={DetalleSedeScreen}
                 />
+
                 <Stack.Screen
                     name="Tramites"
                     component={TramiteScreen}
                 />
+
                 <Stack.Screen
                     name="Requisitos"
                     component={RequisitosScreen}
-                    options={{ headerShown: false }}
                 />
-                
+
+                <Stack.Screen
+                    name="Turno"
+                    component={TurnoScreen}
+                />
 
             </Stack.Navigator>
 
         </NavigationContainer>
 
-    );
+    </TurnoProvider>
+
+);
 
 }
