@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { SafeAreaView, View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -18,8 +18,9 @@ export default function RequisitosScreen() {
     const [menuVisible, setMenuVisible] = useState(false);
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
 
-    const { registrarTurno } = useTurno();
+    const { turno, registrarTurno } = useTurno();
 
     const personasCola = 18;
 
@@ -149,7 +150,19 @@ export default function RequisitosScreen() {
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity activeOpacity={0.9} style={styles.button} onPress={() => setModalVisible(true)}>
+                        <TouchableOpacity activeOpacity={0.9} style={styles.button} onPress={() => {
+
+                            if (turno) {
+
+                                setAlertVisible(true);
+
+                                return;
+
+                            }
+
+                            setModalVisible(true);
+
+                        }}>
                             <LinearGradient colors={[Colors.primary, Colors.secondary]} style={styles.gradient}>
                                 <Ionicons name="people-outline" size={24} color="#fff" />
                                 <Text style={styles.buttonText}>Registrarme en la cola</Text>
@@ -327,6 +340,42 @@ export default function RequisitosScreen() {
 
                 </View>
 
+            </Modal>
+
+            <Modal
+                visible={alertVisible}
+                transparent
+                animationType="fade"
+            >
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
+
+                        <Ionicons
+                            name="alert-circle"
+                            size={70}
+                            color="#E67E22"
+                        />
+
+                        <Text style={styles.modalTitle}>
+                            Ya tienes un turno registrado
+                        </Text>
+
+                        <Text style={styles.modalSubtitle}>
+                            Solo puedes estar registrado en una cola virtual a la vez.
+                            Finaliza o cancela tu turno actual antes de solicitar uno nuevo.
+                        </Text>
+
+                        <TouchableOpacity
+                            style={styles.singleButton}
+                            onPress={() => setAlertVisible(false)}
+                        >
+                            <Text style={styles.confirmText}>
+                                Entendido
+                            </Text>
+                        </TouchableOpacity>
+
+                    </View>
+                </View>
             </Modal>
 
             <BottomNav active="Sedes" />
@@ -563,5 +612,13 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: "bold",
         marginLeft: 10,
+    },
+    singleButton: {
+        marginTop: 20,
+        width: "100%",
+        paddingVertical: 14,
+        borderRadius: 14,
+        backgroundColor: Colors.primary,
+        alignItems: "center",
     },
 });
