@@ -15,10 +15,14 @@ import { useNavigation } from "@react-navigation/native";
 import Colors from "../styles/colors";
 import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
+import { useUsuario } from "./UsuarioContext";
+import { useTurno } from "./TurnoContext";
 
 export default function HomeScreen() {
 
     const navigation = useNavigation<any>();
+    const { cerrarSesion } = useUsuario();
+    const { eliminarTurno } = useTurno();
 
     const [menuVisible, setMenuVisible] = useState(false);
 
@@ -101,18 +105,28 @@ export default function HomeScreen() {
 
             <ProfileMenu
                 visible={menuVisible}
+
                 onClose={() => setMenuVisible(false)}
+
                 onProfile={() => {
                     setMenuVisible(false);
                     navigation.navigate("Profile");
                 }}
+
                 onSettings={() => {
                     setMenuVisible(false);
                     navigation.navigate("Settings");
                 }}
+
                 onLogout={() => {
+                    cerrarSesion();
+                    eliminarTurno();
                     setMenuVisible(false);
-                    navigation.replace("Login");
+
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
                 }}
             />
 
@@ -155,10 +169,10 @@ const styles = StyleSheet.create({
 
     image: {
         width: "100%",
-        height: 340, 
+        height: 340,
         borderRadius: 25,
-        marginBottom: -40, 
-        marginTop:20,
+        marginBottom: -40,
+        marginTop: 20,
         zIndex: 1,
     },
 
@@ -177,7 +191,7 @@ const styles = StyleSheet.create({
     },
 
 
-   
+
 
     title: {
         fontSize: 30,

@@ -9,6 +9,8 @@ import TramiteScreen from "../screens/TramitesScreen";
 import RequisitosScreen from "../screens/RequisitosScreen";
 import TurnoScreen from "../screens/TurnoScreen"
 import { TurnoProvider } from "../screens/TurnoContext";
+import { UsuarioProvider } from "../screens/UsuarioContext";
+import ProfileScreen from "../screens/ProfileScreen";
 
 
 
@@ -17,63 +19,69 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
 
     return (
+        <UsuarioProvider>
 
-    <TurnoProvider>
+            <TurnoProvider>
 
-        <NavigationContainer>
+                <NavigationContainer>
 
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false,
-                }}
-            >
+                    <Stack.Navigator
+                        screenOptions={{
+                            headerShown: false,
+                        }}
+                    >
 
-                <Stack.Screen
-                    name="Login"
-                    component={LoginScreen}
-                />
+                        <Stack.Screen
+                            name="Login"
+                            component={LoginScreen}
+                        />
 
-                <Stack.Screen
-                    name="Register"
-                    component={RegisterScreen}
-                />
+                        <Stack.Screen
+                            name="Register"
+                            component={RegisterScreen}
+                        />
 
-                <Stack.Screen
-                    name="Home"
-                    component={HomeScreen}
-                />
+                        <Stack.Screen
+                            name="Home"
+                            component={HomeScreen}
+                        />
 
-                <Stack.Screen
-                    name="Sedes"
-                    component={SedesScreen}
-                />
+                        <Stack.Screen
+                            name="Sedes"
+                            component={SedesScreen}
+                        />
 
-                <Stack.Screen
-                    name="DetalleSede"
-                    component={DetalleSedeScreen}
-                />
+                        <Stack.Screen
+                            name="DetalleSede"
+                            component={DetalleSedeScreen}
+                        />
 
-                <Stack.Screen
-                    name="Tramites"
-                    component={TramiteScreen}
-                />
+                        <Stack.Screen
+                            name="Tramites"
+                            component={TramiteScreen}
+                        />
 
-                <Stack.Screen
-                    name="Requisitos"
-                    component={RequisitosScreen}
-                />
+                        <Stack.Screen
+                            name="Requisitos"
+                            component={RequisitosScreen}
+                        />
 
-                <Stack.Screen
-                    name="Turno"
-                    component={TurnoScreen}
-                />
+                        <Stack.Screen
+                            name="Turno"
+                            component={TurnoScreen}
+                        />
+                        <Stack.Screen
+                            name="Profile"
+                            component={ProfileScreen}
+                        />
 
-            </Stack.Navigator>
+                    </Stack.Navigator>
 
-        </NavigationContainer>
+                </NavigationContainer>
 
-    </TurnoProvider>
+            </TurnoProvider>
+        </UsuarioProvider>
 
-);
+    );
 
 }

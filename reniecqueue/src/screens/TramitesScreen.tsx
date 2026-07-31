@@ -16,10 +16,14 @@ import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
 import Input from "../components/Input";
 import { tramites, Tramite } from "../data/tramitesData";
+import { useUsuario } from "./UsuarioContext";
+import { useTurno } from "./TurnoContext";
 
 
 export default function TramitesScreen() {
   const navigation = useNavigation<any>();
+  const { cerrarSesion } = useUsuario();
+  const { eliminarTurno } = useTurno();
   const route = useRoute<any>();
   const { sede } = route.params;
 
@@ -156,16 +160,28 @@ export default function TramitesScreen() {
       <BottomNav active="Sedes" />
       <ProfileMenu
         visible={menuVisible}
+
         onClose={() => setMenuVisible(false)}
+
         onProfile={() => {
           setMenuVisible(false);
+          navigation.navigate("Profile");
         }}
+
         onSettings={() => {
           setMenuVisible(false);
+          navigation.navigate("Settings");
         }}
+
         onLogout={() => {
+          cerrarSesion();
+          eliminarTurno();
           setMenuVisible(false);
-          navigation.replace("Login");
+
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          });
         }}
       />
     </SafeAreaView>
@@ -306,7 +322,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 18,
     marginTop: 10,
     marginBottom: 20,
-},
+  },
   gradient: {
     height: 56,
     borderRadius: 18,
@@ -323,6 +339,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 150,
-},
+  },
 
 });

@@ -22,9 +22,16 @@ import Colors from "../styles/colors";
 
 import { useNavigation } from "@react-navigation/native";
 
+import {
+    obtenerCiudadanoPorDni,
+    obtenerUsuarioPorDni,
+} from "../data/reniecData";
+
+import { useUsuario } from "./UsuarioContext";
 export default function LoginScreen() {
 
     const navigation = useNavigation<any>();
+    const { iniciarSesion } = useUsuario();
 
     const [dni, setDni] = useState("");
 
@@ -60,53 +67,48 @@ export default function LoginScreen() {
 
         setTimeout(() => {
 
-            const registrados = [
-                "74258136",
-                "71582469",
-                "78451236",
-                "73698521",
-                "73049855"
-            ];
+    const ciudadanoEncontrado =
+        obtenerCiudadanoPorDni(value);
 
-            const reniec = [
-                ...registrados,
-                "75982413",
-                "74856329",
-                "76325841",
-                "79415236",
-                "72156384",
-                "73512469",
-            ];
+    const usuarioEncontrado =
+        obtenerUsuarioPorDni(value);
 
-            if (!reniec.includes(value)) {
-                setDniStatus("error");
-                setDniMessage("DNI no encontrado en RENIEC.");
-                return;
-            }
+    if (!ciudadanoEncontrado) {
+        setDniStatus("error");
+        setDniMessage("DNI no encontrado en RENIEC.");
+        return;
+    }
 
-            if (registrados.includes(value)) {
-                setDniStatus("success");
-                setDniMessage("DNI válido. Bienvenido nuevamente.");
-                setShowPasswordField(true);
+    if (usuarioEncontrado) {
+        setDniStatus("success");
+        setDniMessage(
+            `Bienvenido nuevamente, ${ciudadanoEncontrado.nombres}.`
+        );
 
-                Animated.timing(fadeAnim, {
-                    toValue: 1,
-                    duration: 500,
-                    useNativeDriver: true,
-                }).start();
-            } else {
-                setDniStatus("success");
-                setDniMessage("DNI válido. Debe registrarse.");
-                setShowRegister(true);
+        setShowPasswordField(true);
 
-                Animated.timing(fadeAnim, {
-                    toValue: 1,
-                    duration: 500,
-                    useNativeDriver: true,
-                }).start();
-            }
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+        }).start();
 
-        }, 1000);
+    } else {
+        setDniStatus("success");
+        setDniMessage(
+            `Hola ${ciudadanoEncontrado.nombres}. Debe registrarse.`
+        );
+
+        setShowRegister(true);
+
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+        }).start();
+    }
+
+}, 1000);
 
     };
 
@@ -218,20 +220,24 @@ export default function LoginScreen() {
                         <Button
     title="Ingresar"
     onPress={() => {
+        const usuarioEncontrado =
+            obtenerUsuarioPorDni(dni);
 
         if (
-            dni === "73049855" &&
-            password === "73049855"
+            usuarioEncontrado &&
+            usuarioEncontrado.password === password
         ) {
+            const sesionIniciada = iniciarSesion(dni);
 
-            navigation.replace("Home");
+            if (sesionIniciada) {
+                navigation.replace("Home");
+            } else {
+                alert("No se pudieron cargar los datos del usuario.");
+            }
 
         } else {
-
             alert("DNI o contraseña incorrectos.");
-
         }
-
     }}
 />
 

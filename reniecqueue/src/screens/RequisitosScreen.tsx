@@ -8,11 +8,17 @@ import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
 import { requisitos } from "../data/requisitosData";
 import { generarPDF } from "../services/pdfService";
+import { useUsuario } from "./UsuarioContext";
+import { useTurno } from "./TurnoContext";
 
-import { useTurno } from "../screens/TurnoContext";
+
+
 
 export default function RequisitosScreen() {
     const navigation = useNavigation<any>();
+    const { cerrarSesion } = useUsuario();
+    const { eliminarTurno } = useTurno();
+
     const route = useRoute<any>();
     const { sede, tramite } = route.params;
     const [menuVisible, setMenuVisible] = useState(false);
@@ -379,7 +385,32 @@ export default function RequisitosScreen() {
             </Modal>
 
             <BottomNav active="Sedes" />
-            <ProfileMenu visible={menuVisible} onClose={() => setMenuVisible(false)} onProfile={() => { setMenuVisible(false); }} onSettings={() => { setMenuVisible(false); }} onLogout={() => { setMenuVisible(false); navigation.replace("Login"); }} />
+            <ProfileMenu
+                visible={menuVisible}
+
+                onClose={() => setMenuVisible(false)}
+
+                onProfile={() => {
+                    setMenuVisible(false);
+                    navigation.navigate("Profile");
+                }}
+
+                onSettings={() => {
+                    setMenuVisible(false);
+                    navigation.navigate("Settings");
+                }}
+
+                onLogout={() => {
+                    cerrarSesion();
+                    eliminarTurno();
+                    setMenuVisible(false);
+
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
+                }}
+            />
         </SafeAreaView>
     );
 }

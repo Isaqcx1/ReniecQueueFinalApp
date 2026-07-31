@@ -7,6 +7,8 @@ import {
     Image,
     TouchableOpacity,
 } from "react-native";
+import { useUsuario } from "./UsuarioContext";
+import { useTurno } from "./TurnoContext";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,11 +17,13 @@ import { useNavigation } from "@react-navigation/native";
 import Colors from "../styles/colors";
 import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
-import { useTurno } from "../screens/TurnoContext";
+
 
 export default function TurnoScreen() {
 
     const navigation = useNavigation<any>();
+    const { cerrarSesion } = useUsuario();
+    const { eliminarTurno } = useTurno();
     const { turno } = useTurno();
 
     const [menuVisible, setMenuVisible] = useState(false);
@@ -160,12 +164,28 @@ export default function TurnoScreen() {
 
             <ProfileMenu
                 visible={menuVisible}
+
                 onClose={() => setMenuVisible(false)}
-                onProfile={() => setMenuVisible(false)}
-                onSettings={() => setMenuVisible(false)}
-                onLogout={() => {
+
+                onProfile={() => {
                     setMenuVisible(false);
-                    navigation.replace("Login");
+                    navigation.navigate("Profile");
+                }}
+
+                onSettings={() => {
+                    setMenuVisible(false);
+                    navigation.navigate("Settings");
+                }}
+
+                onLogout={() => {
+                    cerrarSesion();
+                    eliminarTurno();
+                    setMenuVisible(false);
+
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
                 }}
             />
 

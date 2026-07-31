@@ -9,6 +9,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../styles/colors";
+import { useUsuario } from "../screens/UsuarioContext";
 
 interface Props {
     visible: boolean;
@@ -25,8 +26,10 @@ export default function ProfileMenu({
     onSettings,
     onLogout,
 }: Props) {
+    const { usuario } = useUsuario();
 
     return (
+
 
         <Modal
             transparent
@@ -56,11 +59,15 @@ export default function ProfileMenu({
                         <View>
 
                             <Text style={styles.name}>
-                                Usuario
+                                {usuario
+                                    ? usuario.nombrePerfil
+                                    : "Usuario"}
                             </Text>
 
                             <Text style={styles.subtitle}>
-                                RENIEC Queue
+                                {usuario
+                                    ? `DNI: ${usuario.dni}`
+                                    : "RENIEC Queue"}
                             </Text>
 
                         </View>

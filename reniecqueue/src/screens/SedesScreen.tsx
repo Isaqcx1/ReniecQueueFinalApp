@@ -18,6 +18,8 @@ import Colors from "../styles/colors";
 import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
 import { sedes, filtros, Sede } from "../data/sedesData";
+import { useUsuario } from "./UsuarioContext";
+import { useTurno } from "./TurnoContext";
 
 
 
@@ -26,6 +28,8 @@ export default function SedesScreen() {
 
 
     const navigation = useNavigation<any>();
+    const { cerrarSesion } = useUsuario();
+    const { eliminarTurno } = useTurno();
 
     const [menuVisible, setMenuVisible] = useState(false);
 
@@ -259,31 +263,30 @@ export default function SedesScreen() {
             <BottomNav active="Sedes" />
 
             <ProfileMenu
-
                 visible={menuVisible}
 
                 onClose={() => setMenuVisible(false)}
 
                 onProfile={() => {
-
                     setMenuVisible(false);
-
+                    navigation.navigate("Profile");
                 }}
 
                 onSettings={() => {
-
                     setMenuVisible(false);
-
+                    navigation.navigate("Settings");
                 }}
 
                 onLogout={() => {
-
+                    cerrarSesion();
+                    eliminarTurno();
                     setMenuVisible(false);
 
-                    navigation.replace("Login");
-
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
                 }}
-
             />
 
         </SafeAreaView>
