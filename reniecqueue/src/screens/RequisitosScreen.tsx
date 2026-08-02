@@ -54,106 +54,114 @@ export default function RequisitosScreen() {
     };
 
     const confirmarRegistroCola = async () => {
-    const dniUsuario = usuario?.dni?.trim();
+        const dniUsuario = usuario?.dni?.trim();
 
-    const codigoSede =
-        sede?.codigo ??
-        sede?.codigoSede ??
-        sede?.codigo_sede;
+        const codigoSede =
+            sede?.codigo ??
+            sede?.codigoSede ??
+            sede?.codigo_sede;
 
-    const codigoTramite =
-        tramite?.codigo ??
-        tramite?.codigoTramite ??
-        tramite?.codigo_tramite;
+        const codigoTramite =
+            tramite?.codigo ??
+            tramite?.codigoTramite ??
+            tramite?.codigo_tramite;
 
-    console.log("Datos para registrar turno:", {
-        dni: dniUsuario,
-        sedeCompleta: sede,
-        tramiteCompleto: tramite,
-        codigoSede,
-        codigoTramite,
-    });
-
-    if (!dniUsuario) {
-        Alert.alert(
-            "Sesión no encontrada",
-            "No se pudo obtener el DNI del usuario."
-        );
-        return;
-    }
-
-    if (!codigoSede) {
-        Alert.alert(
-            "Sede no válida",
-            "La sede seleccionada no tiene un código asignado."
-        );
-        return;
-    }
-
-    if (!codigoTramite) {
-        Alert.alert(
-            "Trámite no válido",
-            "El trámite seleccionado no tiene un código asignado."
-        );
-        return;
-    }
-
-    if (turno) {
-        Alert.alert(
-            "Turno activo",
-            "Ya estás registrado en una cola virtual y tienes un turno activo."
-        );
-        return;
-    }
-
-    try {
-        setRegistrando(true);
-
-        const turnoGenerado = await asignarTurnoApi({
+        console.log("Datos para registrar turno:", {
             dni: dniUsuario,
-            codigoSede: String(codigoSede),
-            codigoTramite: String(codigoTramite),
+            sedeCompleta: sede,
+            tramiteCompleto: tramite,
+            codigoSede,
+            codigoTramite,
         });
 
-        registrarTurno({
-    idTurno: turnoGenerado.idTurno,
-    numero: turnoGenerado.codigoTurno,
-    sede: turnoGenerado.sede,
-    tramite: turnoGenerado.tramite,
-    personasEspera:
-        turnoGenerado.personasDelante,
-    tiempoEstimado:
-        turnoGenerado.tiempoEstimadoMinutos,
-    estado: turnoGenerado.estado,
-});
+        if (!dniUsuario) {
+            Alert.alert(
+                "Sesión no encontrada",
+                "No se pudo obtener el DNI del usuario."
+            );
+            return;
+        }
 
-        setModalVisible(false);
+        if (!codigoSede) {
+            Alert.alert(
+                "Sede no válida",
+                "La sede seleccionada no tiene un código asignado."
+            );
+            return;
+        }
 
-        Alert.alert(
-            "Turno asignado",
-            `Tu turno ${turnoGenerado.codigoTurno} fue registrado correctamente.`,
-            [
-                {
-                    text: "Ver mi turno",
-                    onPress: () =>
-                        navigation.navigate("Turno"),
-                },
-            ]
-        );
-    } catch (error) {
-        const mensaje =
-            error instanceof Error
-                ? error.message
-                : "No se pudo registrar el turno.";
+        if (!codigoTramite) {
+            Alert.alert(
+                "Trámite no válido",
+                "El trámite seleccionado no tiene un código asignado."
+            );
+            return;
+        }
 
-        Alert.alert(
-            "No se pudo asignar el turno",
-            mensaje
-        );
-    } finally {
-        setRegistrando(false);
-    }
-};
+        const estadosActivos = [
+            "EN_ESPERA",
+            "LLAMADO",
+            "EN_ATENCION",
+        ];
+
+        if (
+            turno &&
+            estadosActivos.includes(turno.estado)
+        ) {
+            Alert.alert(
+                "Turno activo",
+                "Ya estás registrado en una cola virtual y tienes un turno activo."
+            );
+            return;
+        }
+        try {
+            setRegistrando(true);
+
+            const turnoGenerado = await asignarTurnoApi({
+                dni: dniUsuario,
+                codigoSede: String(codigoSede),
+                codigoTramite: String(codigoTramite),
+            });
+
+            registrarTurno({
+                idTurno: turnoGenerado.idTurno,
+                numero: turnoGenerado.codigoTurno,
+                sede: turnoGenerado.sede,
+                tramite: turnoGenerado.tramite,
+                personasEspera:
+                    turnoGenerado.personasDelante,
+                tiempoEstimado:
+                    turnoGenerado.tiempoEstimadoMinutos,
+                estado: turnoGenerado.estado,
+            });
+
+            setModalVisible(false);
+
+            Alert.alert(
+                "Turno asignado",
+                `Tu turno ${turnoGenerado.codigoTurno} fue registrado correctamente.`,
+                [
+                    {
+                        text: "Ver mi turno",
+                        onPress: () =>
+                            navigation.navigate("Turno"),
+                    },
+                ]
+            );
+        } catch (error) {
+            const mensaje =
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo registrar el turno.";
+
+            Alert.alert(
+                "No se pudo asignar el turno",
+                mensaje
+            );
+        } finally {
+            setRegistrando(false);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
