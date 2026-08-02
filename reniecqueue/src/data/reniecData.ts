@@ -133,6 +133,66 @@ export function obtenerUsuarioPorDni(
 ): UsuarioRegistrado | undefined {
     return usuariosRegistrados.find((usuario) => usuario.dni === dni);
 }
+interface DatosNuevoUsuario {
+    dni: string;
+    correo: string;
+    celular: string;
+    password: string;
+}
+
+interface ResultadoRegistro {
+    ok: boolean;
+    mensaje: string;
+}
+
+export function registrarUsuario(
+    datos: DatosNuevoUsuario
+): ResultadoRegistro {
+    const ciudadano = obtenerCiudadanoPorDni(datos.dni);
+
+    if (!ciudadano) {
+        return {
+            ok: false,
+            mensaje: "El DNI no existe en los datos de RENIEC.",
+        };
+    }
+
+    const usuarioExistente = obtenerUsuarioPorDni(datos.dni);
+
+    if (usuarioExistente) {
+        return {
+            ok: false,
+            mensaje: "Este DNI ya tiene una cuenta registrada.",
+        };
+    }
+
+    const correoEnUso = usuariosRegistrados.some(
+        (usuario) =>
+            usuario.correo?.toLowerCase() ===
+            datos.correo.toLowerCase()
+    );
+
+    if (correoEnUso) {
+        return {
+            ok: false,
+            mensaje: "El correo electrónico ya está registrado.",
+        };
+    }
+
+    usuariosRegistrados.push({
+        dni: datos.dni,
+        nombrePerfil:
+            ciudadano.nombres.split(" ")[0] || ciudadano.nombres,
+        correo: datos.correo,
+        celular: datos.celular,
+        password: datos.password,
+    });
+
+    return {
+        ok: true,
+        mensaje: "Su cuenta fue creada correctamente.",
+    };
+}
 
 export function obtenerNombreCompleto(dni: string): string {
     const ciudadano = obtenerCiudadanoPorDni(dni);

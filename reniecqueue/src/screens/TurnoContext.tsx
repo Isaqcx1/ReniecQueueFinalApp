@@ -1,19 +1,13 @@
 import React, { createContext, useContext, useState } from "react";
 
 export interface Turno {
-
+    idTurno: number;
     numero: string;
-
     sede: any;
-
     tramite: any;
-
     personasEspera: number;
-
     tiempoEstimado: number;
-
     estado: string;
-
 }
 
 interface TurnoContextType {
