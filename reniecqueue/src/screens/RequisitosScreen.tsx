@@ -116,16 +116,16 @@ export default function RequisitosScreen() {
         });
 
         registrarTurno({
-            idTurno: turnoGenerado.idTurno,
-            numero: turnoGenerado.codigoTurno,
-            sede: turnoGenerado.sede,
-            tramite: turnoGenerado.tramite,
-            personasEspera:
-                turnoGenerado.personasDelante,
-            tiempoEstimado:
-                turnoGenerado.tiempoEstimadoMinutos,
-            estado: turnoGenerado.estado,
-        });
+    idTurno: turnoGenerado.idTurno,
+    numero: turnoGenerado.codigoTurno,
+    sede: turnoGenerado.sede,
+    tramite: turnoGenerado.tramite,
+    personasEspera:
+        turnoGenerado.personasDelante,
+    tiempoEstimado:
+        turnoGenerado.tiempoEstimadoMinutos,
+    estado: turnoGenerado.estado,
+});
 
         setModalVisible(false);
 

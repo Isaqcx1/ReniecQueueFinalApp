@@ -57,3 +57,87 @@ export async function asignarTurnoApi(
 
     return resultado.turno;
 }
+
+export interface AvisoTurno {
+    tipo:
+        | "SIGUIENTE"
+        | "PROXIMO"
+        | "LLAMADO"
+        | "EN_ATENCION"
+        | "FINALIZADO"
+        | "AUSENTE";
+
+    titulo: string;
+    mensaje: string;
+}
+
+export interface TurnoSeguimiento {
+    idTurno: number;
+    codigoTurno: string;
+    numeroTurno: number;
+    estado: string;
+
+    personasDelante: number;
+    tiempoEstimadoMinutos: number;
+    ventanilla: string | null;
+
+    sede: {
+        idSede: number;
+        codigo: string;
+        nombre: string;
+    };
+
+    tramite: {
+        idTramite: number;
+        codigo: string;
+        nombre: string;
+    };
+
+    asesor: {
+        idAsesor: number;
+        nombreCompleto: string;
+    } | null;
+
+    fechaRegistro: string;
+    fechaLlamado: string | null;
+    fechaInicioAtencion: string | null;
+    fechaFinalizacion: string | null;
+
+    aviso: AvisoTurno | null;
+}
+
+export interface SeguimientoTurnoRespuesta {
+    ok: boolean;
+    tieneTurno: boolean;
+    tieneTurnoActivo: boolean;
+    mensaje?: string;
+    turno: TurnoSeguimiento | null;
+}
+
+export async function obtenerTurnoActivoApi(
+    dni: string
+): Promise<SeguimientoTurnoRespuesta> {
+    const dniLimpio = String(dni).trim();
+
+    if (!/^\d{8}$/.test(dniLimpio)) {
+        throw new Error(
+            "No se pudo obtener un DNI válido."
+        );
+    }
+
+    const respuesta = await fetch(
+        `${API_URL}/api/turnos/activo/${dniLimpio}`
+    );
+
+    const resultado =
+        (await respuesta.json()) as SeguimientoTurnoRespuesta;
+
+    if (!respuesta.ok) {
+        throw new Error(
+            resultado.mensaje ||
+                "No se pudo consultar el turno."
+        );
+    }
+
+    return resultado;
+}
