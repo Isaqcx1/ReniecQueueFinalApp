@@ -128,6 +128,69 @@ export interface CancelarTurnoRespuesta {
         fechaCancelacion: string;
     };
 }
+export interface HistorialTurno {
+    idTurno: number;
+    codigoTurno: string;
+    numeroTurno: number;
+    estado:
+        | "FINALIZADO"
+        | "AUSENTE"
+        | "CANCELADO";
+
+    sede: {
+        idSede: number;
+        codigo: string;
+        nombre: string;
+    };
+
+    tramite: {
+        idTramite: number;
+        codigo: string;
+        nombre: string;
+    };
+
+    asesor: {
+        nombreCompleto: string;
+        ventanilla: string | null;
+    } | null;
+
+    fechaRegistro: string;
+    fechaLlamado: string | null;
+    fechaInicioAtencion: string | null;
+    fechaFinalizacion: string | null;
+}
+
+export interface HistorialTurnosRespuesta {
+    ok: boolean;
+
+    ciudadano: {
+        dni: string;
+        nombreCompleto: string | null;
+    };
+
+    total: number;
+
+    historial: HistorialTurno[];
+}
+
+export async function obtenerHistorialTurnosApi(
+    dni: string
+): Promise<HistorialTurnosRespuesta> {
+    const respuesta = await fetch(
+        `${API_URL}/api/turnos/historial/${dni}`
+    );
+
+    const resultado =
+        (await respuesta.json()) as HistorialTurnosRespuesta;
+
+    if (!respuesta.ok) {
+        throw new Error(
+            "No se pudo obtener el historial de turnos."
+        );
+    }
+
+    return resultado;
+}
 
 export async function obtenerTurnoActivoApi(
     dni: string
@@ -188,3 +251,4 @@ export async function cancelarTurnoApi(
 
     return resultado;
 }
+

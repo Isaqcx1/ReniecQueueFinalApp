@@ -1,5 +1,6 @@
 import React, {
     createContext,
+    useCallback,
     useContext,
     useState,
 } from "react";
@@ -30,6 +31,7 @@ export interface Turno {
 
     personasEspera: number;
     tiempoEstimado: number;
+
     estado: string;
 
     ventanilla?: string | null;
@@ -44,6 +46,8 @@ export interface Turno {
 interface TurnoContextType {
     turno: Turno | null;
 
+    tieneTurnoActivo: boolean;
+
     registrarTurno: (
         nuevoTurno: Turno
     ) => void;
@@ -56,9 +60,19 @@ interface TurnoContextType {
 }
 
 const TurnoContext =
-    createContext<TurnoContextType>(
+    createContext(
         {} as TurnoContextType
     );
+
+export function esEstadoTurnoActivo(
+    estado?: string | null
+): boolean {
+    return (
+        estado === "EN_ESPERA" ||
+        estado === "LLAMADO" ||
+        estado === "EN_ATENCION"
+    );
+}
 
 export function TurnoProvider({
     children,
@@ -68,26 +82,46 @@ export function TurnoProvider({
     const [turno, setTurno] =
         useState<Turno | null>(null);
 
-    function registrarTurno(
-        nuevoTurno: Turno
-    ) {
-        setTurno(nuevoTurno);
-    }
+    const tieneTurnoActivo =
+        turno !== null &&
+        esEstadoTurnoActivo(
+            turno.estado
+        );
 
-    function actualizarTurno(
-        turnoActualizado: Turno
-    ) {
-        setTurno(turnoActualizado);
-    }
+    const registrarTurno =
+        useCallback(
+            (
+                nuevoTurno: Turno
+            ) => {
+                setTurno(
+                    nuevoTurno
+                );
+            },
+            []
+        );
 
-    function eliminarTurno() {
-        setTurno(null);
-    }
+    const actualizarTurno =
+        useCallback(
+            (
+                turnoActualizado: Turno
+            ) => {
+                setTurno(
+                    turnoActualizado
+                );
+            },
+            []
+        );
+
+    const eliminarTurno =
+        useCallback(() => {
+            setTurno(null);
+        }, []);
 
     return (
         <TurnoContext.Provider
             value={{
                 turno,
+                tieneTurnoActivo,
                 registrarTurno,
                 actualizarTurno,
                 eliminarTurno,
@@ -99,5 +133,7 @@ export function TurnoProvider({
 }
 
 export function useTurno() {
-    return useContext(TurnoContext);
+    return useContext(
+        TurnoContext
+    );
 }

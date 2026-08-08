@@ -1,5 +1,7 @@
 import React from "react";
+
 import {
+    Alert,
     View,
     TouchableOpacity,
     Text,
@@ -7,40 +9,102 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+
 import { LinearGradient } from "expo-linear-gradient";
+
 import { useNavigation } from "@react-navigation/native";
 
 import Colors from "../styles/colors";
 
+import {
+    useTurno,
+} from "../screens/TurnoContext";
+
 interface Props {
-    active: "Inicio" | "Sedes" | "Turno";
+    active:
+        | "Inicio"
+        | "Sedes"
+        | "Turno";
 }
 
-export default function BottomNav({ active }: Props) {
+type IconName =
+    React.ComponentProps<
+        typeof Ionicons
+    >["name"];
 
-    const navigation = useNavigation<any>();
+export default function BottomNav({
+    active,
+}: Props) {
+    const navigation =
+        useNavigation<any>();
 
-    const Item = (
-        name: "Inicio" | "Sedes" | "Turno",
-        icon: any,
+    const {
+        
+        tieneTurnoActivo,
+    } = useTurno();
+
+    const navegar = (
+        name:
+            | "Inicio"
+            | "Sedes"
+            | "Turno",
         screen: string
     ) => {
+        /*
+        Mientras el turno siga activo,
+        no permitimos volver a Sedes.
+        */
+        if (
+            name === "Sedes" &&
+            tieneTurnoActivo
+        ) {
+            Alert.alert(
+                "Turno activo",
+                "Ya tienes un turno activo. Debes esperar a que finalice antes de solicitar otro turno."
+            );
 
-        const selected = active === name;
+            return;
+        }
+
+       
+
+        navigation.navigate(screen);
+    };
+
+    const Item = (
+        name:
+            | "Inicio"
+            | "Sedes"
+            | "Turno",
+        icon: IconName,
+        screen: string
+    ) => {
+        const selected =
+            active === name;
 
         if (selected) {
-
             return (
-
                 <LinearGradient
-                    colors={[Colors.primary, Colors.secondary]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.activeItem}
+                    colors={[
+                        Colors.primary,
+                        Colors.secondary,
+                    ]}
+                    start={{
+                        x: 0,
+                        y: 0,
+                    }}
+                    end={{
+                        x: 1,
+                        y: 1,
+                    }}
+                    style={
+                        styles.activeItem
+                    }
                 >
-
                     <TouchableOpacity
-                        style={styles.button}
+                        style={
+                            styles.button
+                        }
                         activeOpacity={0.8}
                     >
                         <Ionicons
@@ -49,137 +113,137 @@ export default function BottomNav({ active }: Props) {
                             color="#fff"
                         />
 
-                        <Text style={styles.activeText}>
+                        <Text
+                            style={
+                                styles.activeText
+                            }
+                        >
                             {name}
                         </Text>
-
                     </TouchableOpacity>
-
                 </LinearGradient>
-
             );
-
         }
 
         return (
-
             <TouchableOpacity
                 style={styles.button}
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate(screen)}
+                onPress={() =>
+                    navegar(
+                        name,
+                        screen
+                    )
+                }
             >
-
                 <Ionicons
                     name={icon}
                     size={22}
                     color={Colors.gray}
                 />
 
-                <Text style={styles.text}>
+                <Text
+                    style={styles.text}
+                >
                     {name}
                 </Text>
-
             </TouchableOpacity>
-
         );
-
     };
 
     return (
-
         <View style={styles.container}>
+            {Item(
+                "Inicio",
+                "home",
+                "Home"
+            )}
 
-            {Item("Inicio", "home", "Home")}
+            {Item(
+                "Sedes",
+                "business",
+                "Sedes"
+            )}
 
-            {Item("Sedes", "business", "Sedes")}
-
-            {Item("Turno", "ticket", "Turno")}
-
+            {Item(
+                "Turno",
+                "ticket",
+                "Turno"
+            )}
         </View>
-
     );
-
 }
 
-const styles = StyleSheet.create({
+const styles =
+    StyleSheet.create({
+        container: {
+            position: "absolute",
 
-    container: {
+            bottom: 20,
 
-        position: "absolute",
+            left: 18,
 
-        bottom: 20,
+            right: 18,
 
-        left: 18,
+            backgroundColor: "#fff",
 
-        right: 18,
+            borderRadius: 25,
 
-        backgroundColor: "#fff",
+            flexDirection: "row",
 
-        borderRadius: 25,
+            justifyContent:
+                "space-around",
 
-        flexDirection: "row",
+            alignItems: "center",
 
-        justifyContent: "space-around",
+            paddingVertical: 12,
 
-        alignItems: "center",
+            elevation: 12,
 
-        paddingVertical: 12,
+            shadowColor: "#000",
 
-        elevation: 12,
+            shadowOpacity: 0.12,
 
-        shadowColor: "#000",
+            shadowRadius: 12,
 
-        shadowOpacity: 0.12,
-
-        shadowRadius: 12,
-
-        shadowOffset: {
-            width: 0,
-            height: 4,
+            shadowOffset: {
+                width: 0,
+                height: 4,
+            },
         },
 
-    },
+        button: {
+            width: 90,
 
-    button: {
+            alignItems: "center",
 
-        width: 90,
+            justifyContent:
+                "center",
 
-        alignItems: "center",
+            paddingVertical: 8,
+        },
 
-        justifyContent: "center",
+        activeItem: {
+            borderRadius: 18,
+        },
 
-        paddingVertical: 8,
+        activeText: {
+            color: "#fff",
 
-    },
+            marginTop: 4,
 
-    activeItem: {
+            fontWeight: "bold",
 
-        borderRadius: 18,
+            fontSize: 13,
+        },
 
-    },
+        text: {
+            marginTop: 4,
 
-    activeText: {
+            color: Colors.gray,
 
-        color: "#fff",
+            fontSize: 13,
 
-        marginTop: 4,
-
-        fontWeight: "bold",
-
-        fontSize: 13,
-
-    },
-
-    text: {
-
-        marginTop: 4,
-
-        color: Colors.gray,
-
-        fontSize: 13,
-
-        fontWeight: "600",
-
-    },
-
-});
+            fontWeight: "600",
+        },
+    });

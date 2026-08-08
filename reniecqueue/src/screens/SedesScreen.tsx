@@ -1,4 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+
 import {
     SafeAreaView,
     View,
@@ -10,519 +15,686 @@ import {
     FlatList,
 } from "react-native";
 
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import {
+    LinearGradient,
+} from "expo-linear-gradient";
+
+import {
+    Ionicons,
+} from "@expo/vector-icons";
+
+import {
+    useNavigation,
+} from "@react-navigation/native";
 
 import Colors from "../styles/colors";
-import BottomNav from "../components/BottomNav";
-import ProfileMenu from "../components/ProfileMenu";
-import { sedes, filtros, Sede } from "../data/sedesData";
-import { useUsuario } from "./UsuarioContext";
-import { useTurno } from "./TurnoContext";
 
+import BottomNav
+    from "../components/BottomNav";
 
+import ProfileMenu
+    from "../components/ProfileMenu";
+
+import {
+    sedes,
+    filtros,
+    Sede,
+} from "../data/sedesData";
+
+import {
+    useUsuario,
+} from "./UsuarioContext";
+
+import {
+    useTurno,
+} from "./TurnoContext";
 
 export default function SedesScreen() {
+    const navigation =
+        useNavigation<any>();
 
+    const {
+        cerrarSesion,
+    } = useUsuario();
 
+    const {
+        eliminarTurno,
+    } = useTurno();
 
-    const navigation = useNavigation<any>();
-    const { cerrarSesion } = useUsuario();
-    const { eliminarTurno } = useTurno();
+    const [
+        menuVisible,
+        setMenuVisible,
+    ] = useState(false);
 
-    const [menuVisible, setMenuVisible] = useState(false);
+    const [
+        busqueda,
+        setBusqueda,
+    ] = useState("");
 
-    const [busqueda, setBusqueda] = useState("");
+    const [
+        filtro,
+        setFiltro,
+    ] = useState(
+        "Todos"
+    );
 
-    const [filtro, setFiltro] = useState("Todos");
+    const [
+        seleccionada,
+        setSeleccionada,
+    ] =
+        useState<Sede | null>(
+            null
+        );
 
-    const [seleccionada, setSeleccionada] = useState<Sede | null>(null);
+  
 
-    const sedesFiltradas = useMemo(() => {
+    const sedesFiltradas =
+        useMemo(() => {
+            return sedes.filter(
+                (sede) => {
+                    const
+                        coincideDistrito =
+                            filtro ===
+                                "Todos" ||
+                            sede.distrito ===
+                                filtro;
 
-        return sedes.filter((sede) => {
+                    const
+                        coincideBusqueda =
+                            sede.nombre
+                                .toLowerCase()
+                                .includes(
+                                    busqueda.toLowerCase()
+                                ) ||
+                            sede.distrito
+                                .toLowerCase()
+                                .includes(
+                                    busqueda.toLowerCase()
+                                );
 
-            const coincideDistrito =
-                filtro === "Todos" ||
-                sede.distrito === filtro;
+                    return (
+                        coincideDistrito &&
+                        coincideBusqueda
+                    );
+                }
+            );
+        }, [
+            busqueda,
+            filtro,
+        ]);
 
-            const coincideBusqueda =
-                sede.nombre
-                    .toLowerCase()
-                    .includes(busqueda.toLowerCase()) ||
+    const seleccionarSede = (
+        sedeSeleccionada: Sede
+    ) => {
+        setSeleccionada(
+            sedeSeleccionada
+        );
 
-                sede.distrito
-                    .toLowerCase()
-                    .includes(busqueda.toLowerCase());
+        navigation.navigate(
+            "DetalleSede",
+            {
+                sede: {
+                    ...sedeSeleccionada,
 
-            return coincideDistrito && coincideBusqueda;
+                    latitud:
+                        -12.0913,
 
-        });
-
-    }, [busqueda, filtro]);
+                    longitud:
+                        -77.0465,
+                },
+            }
+        );
+    };
 
     return (
-
-        <SafeAreaView style={styles.container}>
-
+        <SafeAreaView
+            style={
+                styles.container
+            }
+        >
             <LinearGradient
-                colors={[Colors.primary, Colors.secondary]}
-                style={styles.header}
+                colors={[
+                    Colors.primary,
+                    Colors.secondary,
+                ]}
+                style={
+                    styles.header
+                }
             >
-
                 <Image
-                    source={require("../assets/logor.png")}
-                    style={styles.logo}
+                    source={require(
+                        "../assets/logor.png"
+                    )}
+                    style={
+                        styles.logo
+                    }
                     resizeMode="contain"
                 />
 
                 <TouchableOpacity
-                    style={styles.profile}
-                    onPress={() => setMenuVisible(true)}
+                    style={
+                        styles.profile
+                    }
+                    onPress={() =>
+                        setMenuVisible(
+                            true
+                        )
+                    }
                 >
-
                     <Ionicons
                         name="person-circle"
                         color="#fff"
                         size={42}
                     />
-
                 </TouchableOpacity>
-
             </LinearGradient>
 
-            <Text style={styles.title}>
+            <Text
+                style={
+                    styles.title
+                }
+            >
                 Selecciona una sede
             </Text>
 
-            <View style={styles.searchBox}>
-
+            <View
+                style={
+                    styles.searchBox
+                }
+            >
                 <Ionicons
                     name="search"
                     size={22}
-                    color={Colors.gray}
+                    color={
+                        Colors.gray
+                    }
                 />
 
                 <TextInput
-                    style={styles.input}
+                    style={
+                        styles.input
+                    }
                     placeholder="Buscar por nombre o distrito..."
-                    value={busqueda}
-                    onChangeText={setBusqueda}
+                    value={
+                        busqueda
+                    }
+                    onChangeText={
+                        setBusqueda
+                    }
                 />
-
             </View>
 
             <FlatList
-
                 horizontal
-
                 data={filtros}
-
-                showsHorizontalScrollIndicator={false}
-
-                contentContainerStyle={styles.filterContainer}
-
-                keyExtractor={(item) => item}
-
-                renderItem={({ item }) => (
-
+                showsHorizontalScrollIndicator={
+                    false
+                }
+                contentContainerStyle={
+                    styles.filterContainer
+                }
+                keyExtractor={(
+                    item
+                ) => item}
+                renderItem={({
+                    item,
+                }) => (
                     <TouchableOpacity
-
-                        onPress={() => setFiltro(item)}
-
+                        onPress={() =>
+                            setFiltro(
+                                item
+                            )
+                        }
                         style={[
                             styles.filter,
-                            filtro === item && styles.filterActive,
+
+                            filtro ===
+                                item &&
+                                styles.filterActive,
                         ]}
-
                     >
-
                         <Text
                             style={[
                                 styles.filterText,
-                                filtro === item &&
-                                styles.filterTextActive,
+
+                                filtro ===
+                                    item &&
+                                    styles.filterTextActive,
                             ]}
                         >
-
                             {item}
-
                         </Text>
-
                     </TouchableOpacity>
-
                 )}
-
             />
 
             <FlatList
-
                 horizontal
-
                 pagingEnabled
-
                 snapToAlignment="center"
-
                 decelerationRate="fast"
-
-                showsHorizontalScrollIndicator={false}
-
-                data={sedesFiltradas}
-
-                keyExtractor={(item) => item.id.toString()}
-
-                renderItem={({ item }) => (
-
+                showsHorizontalScrollIndicator={
+                    false
+                }
+                data={
+                    sedesFiltradas
+                }
+                keyExtractor={(
+                    item
+                ) =>
+                    item.id.toString()
+                }
+                renderItem={({
+                    item,
+                }) => (
                     <TouchableOpacity
-
-                        activeOpacity={0.9}
-
-                        onPress={() => {
-
-                            seleccionada?.id === item.id;
-
-                            navigation.navigate("DetalleSede", {
-
-                                sede: {
-
-                                    ...item,
-
-                                    latitud: -12.0913,
-
-                                    longitud: -77.0465,
-
-                                },
-
-                            });
-
-                        }}
-
+                        activeOpacity={
+                            0.9
+                        }
+                        onPress={() =>
+                            seleccionarSede(
+                                item
+                            )
+                        }
                         style={[
                             styles.card,
-                            seleccionada?.id === item.id &&
-                            styles.cardSelected,
+
+                            seleccionada
+                                ?.id ===
+                                item.id &&
+                                styles.cardSelected,
                         ]}
-
                     >
-
                         <Image
-                            source={item.imagen}
-                            style={styles.cardImage}
+                            source={
+                                item.imagen
+                            }
+                            style={
+                                styles.cardImage
+                            }
                             resizeMode="cover"
                         />
 
-                        <View style={styles.cardBody}>
-
-                            <Text style={styles.cardTitle}>
-                                {item.nombre}
+                        <View
+                            style={
+                                styles.cardBody
+                            }
+                        >
+                            <Text
+                                style={
+                                    styles.cardTitle
+                                }
+                            >
+                                {
+                                    item.nombre
+                                }
                             </Text>
 
-                            <View style={styles.locationRow}>
-
+                            <View
+                                style={
+                                    styles.locationRow
+                                }
+                            >
                                 <Ionicons
                                     name="location"
-                                    size={18}
-                                    color={Colors.primary}
+                                    size={
+                                        18
+                                    }
+                                    color={
+                                        Colors.primary
+                                    }
                                 />
 
-                                <Text style={styles.cardAddress}>
-                                    {item.direccion}
+                                <Text
+                                    style={
+                                        styles.cardAddress
+                                    }
+                                >
+                                    {
+                                        item.direccion
+                                    }
                                 </Text>
-
                             </View>
 
-                            {seleccionada?.id === item.id && (
-
-                                <View style={styles.selectedBox}>
-
+                            {seleccionada
+                                ?.id ===
+                                item.id && (
+                                <View
+                                    style={
+                                        styles.selectedBox
+                                    }
+                                >
                                     <Ionicons
                                         name="checkmark-circle"
-                                        size={20}
+                                        size={
+                                            20
+                                        }
                                         color="#fff"
                                     />
 
-                                    <Text style={styles.selectedText}>
+                                    <Text
+                                        style={
+                                            styles.selectedText
+                                        }
+                                    >
                                         Sede seleccionada
                                     </Text>
-
                                 </View>
-
                             )}
-
                         </View>
-
                     </TouchableOpacity>
-
                 )}
-
-                contentContainerStyle={styles.cardsContainer}
-
+                contentContainerStyle={
+                    styles.cardsContainer
+                }
             />
 
-            <BottomNav active="Sedes" />
+            <BottomNav
+                active="Sedes"
+            />
 
             <ProfileMenu
-                visible={menuVisible}
-
-                onClose={() => setMenuVisible(false)}
-
+                visible={
+                    menuVisible
+                }
+                onClose={() =>
+                    setMenuVisible(
+                        false
+                    )
+                }
                 onProfile={() => {
-                    setMenuVisible(false);
-                    navigation.navigate("Profile");
-                }}
+                    setMenuVisible(
+                        false
+                    );
 
+                    navigation.navigate(
+                        "Profile"
+                    );
+                }}
                 onSettings={() => {
-                    setMenuVisible(false);
-                    navigation.navigate("Settings");
-                }}
+                    setMenuVisible(
+                        false
+                    );
 
+                    navigation.navigate(
+                        "Settings"
+                    );
+                }}
                 onLogout={() => {
                     cerrarSesion();
+
                     eliminarTurno();
-                    setMenuVisible(false);
+
+                    setMenuVisible(
+                        false
+                    );
 
                     navigation.reset({
                         index: 0,
-                        routes: [{ name: "Login" }],
+
+                        routes: [
+                            {
+                                name:
+                                    "Login",
+                            },
+                        ],
                     });
                 }}
             />
-
         </SafeAreaView>
-
     );
-
 }
 
-const styles = StyleSheet.create({
+const styles =
+    StyleSheet.create({
+        container: {
+            flex: 1,
 
-    container: {
+            backgroundColor:
+                "#F4F7FB",
+        },
 
-        flex: 1,
+        header: {
+            height: 120,
 
-        backgroundColor: "#F4F7FB",
+            justifyContent:
+                "center",
 
-    },
+            alignItems:
+                "center",
 
-    header: {
-        height: 120,
+            paddingHorizontal:
+                20,
 
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        elevation: 8,
-    },
+            elevation: 8,
+        },
 
-    logo: {
+        logo: {
+            width: 250,
 
-        width: 250,
-        height: 200,
+            height: 200,
+        },
 
-    },
+        profile: {
+            position:
+                "absolute",
 
-    profile: {
+            top: 55,
 
-        position: "absolute",
+            right: 20,
+        },
 
-        top: 55,
+        title: {
+            fontSize: 28,
 
-        right: 20,
+            fontWeight:
+                "bold",
 
-    },
+            color:
+                Colors.text,
 
-    title: {
+            marginTop: 20,
 
-        fontSize: 28,
+            marginHorizontal:
+                20,
+        },
 
-        fontWeight: "bold",
+        searchBox: {
+            marginHorizontal:
+                20,
 
-        color: Colors.text,
+            marginTop: 18,
 
-        marginTop: 20,
+            backgroundColor:
+                "#fff",
 
-        marginHorizontal: 20,
+            borderRadius: 18,
 
-    },
+            paddingHorizontal:
+                15,
 
-    searchBox: {
+            flexDirection:
+                "row",
 
-        marginHorizontal: 20,
+            alignItems:
+                "center",
 
-        marginTop: 18,
+            elevation: 3,
+        },
 
-        backgroundColor: "#fff",
+        input: {
+            flex: 1,
 
-        borderRadius: 18,
+            marginLeft: 10,
 
-        paddingHorizontal: 15,
+            height: 55,
 
-        flexDirection: "row",
+            color:
+                Colors.text,
+        },
 
-        alignItems: "center",
+        filterContainer: {
+            paddingHorizontal:
+                20,
 
-        elevation: 3,
+            paddingVertical:
+                18,
+        },
 
-    },
+        filter: {
+            backgroundColor:
+                "#fff",
 
-    input: {
+            borderRadius: 18,
 
-        flex: 1,
+            paddingHorizontal:
+                16,
 
-        marginLeft: 10,
+            paddingVertical:
+                9,
 
-        height: 55,
+            marginRight: 10,
 
-        color: Colors.text,
+            elevation: 2,
 
-    },
+            alignSelf:
+                "flex-start",
 
-    filterContainer: {
+            minWidth: 0,
+        },
 
-        paddingHorizontal: 20,
+        filterActive: {
+            backgroundColor:
+                Colors.primary,
+        },
 
-        paddingVertical: 18,
+        filterText: {
+            color:
+                Colors.gray,
 
-    },
+            fontWeight:
+                "600",
 
-    filter: {
-        backgroundColor: "#fff",
-        borderRadius: 18,
-        paddingHorizontal: 16,
-        paddingVertical: 9,
-        marginRight: 10,
-        elevation: 2,
+            fontSize: 14,
 
+            textAlign:
+                "center",
+        },
 
-        alignSelf: "flex-start",
-        minWidth: 0,
-    },
+        filterTextActive: {
+            color: "#fff",
 
-    filterActive: {
-        backgroundColor: Colors.primary,
-    },
+            textAlign:
+                "center",
+        },
 
-    filterText: {
-        color: Colors.gray,
-        fontWeight: "600",
-        fontSize: 14,
-        textAlign: "center",
-    },
+        cardsContainer: {
+            paddingHorizontal:
+                15,
 
-    filterTextActive: {
-        color: "#fff",
-        textAlign: "center",
-    },
-    cardsContainer: {
+            paddingBottom:
+                230,
+        },
 
-        paddingHorizontal: 15,
+        card: {
+            width: 300,
 
-        paddingBottom: 230,
+            backgroundColor:
+                "#fff",
 
-    },
+            borderRadius: 25,
 
-    card: {
+            marginHorizontal:
+                10,
 
-        width: 300,
+            elevation: 6,
 
-        backgroundColor: "#fff",
+            overflow:
+                "hidden",
 
-        borderRadius: 25,
+            borderWidth: 2,
 
-        marginHorizontal: 10,
+            borderColor:
+                "transparent",
+        },
 
-        elevation: 6,
+        cardSelected: {
+            borderColor:
+                Colors.primary,
+        },
 
-        overflow: "hidden",
+        cardImage: {
+            width: "100%",
 
-        borderWidth: 2,
+            height: 180,
+        },
 
-        borderColor: "transparent",
+        cardBody: {
+            padding: 18,
+        },
 
-    },
+        cardTitle: {
+            fontSize: 22,
 
-    cardSelected: {
+            fontWeight:
+                "bold",
 
-        borderColor: Colors.primary,
+            color:
+                Colors.text,
+        },
 
-    },
+        locationRow: {
+            flexDirection:
+                "row",
 
-    cardImage: {
+            alignItems:
+                "center",
 
-        width: "100%",
+            marginTop: 12,
+        },
 
-        height: 180,
+        cardAddress: {
+            flex: 1,
 
-    },
+            marginLeft: 8,
 
-    cardBody: {
+            color:
+                Colors.gray,
 
-        padding: 18,
+            fontSize: 15,
 
-    },
+            lineHeight: 22,
+        },
 
-    cardTitle: {
+        selectedBox: {
+            marginTop: 20,
 
-        fontSize: 22,
+            backgroundColor:
+                Colors.primary,
 
-        fontWeight: "bold",
+            borderRadius: 15,
 
-        color: Colors.text,
+            flexDirection:
+                "row",
 
-    },
+            justifyContent:
+                "center",
 
-    locationRow: {
+            alignItems:
+                "center",
 
-        flexDirection: "row",
+            paddingVertical:
+                10,
+        },
 
-        alignItems: "center",
+        selectedText: {
+            color: "#fff",
 
-        marginTop: 12,
+            marginLeft: 8,
 
-    },
+            fontWeight:
+                "bold",
 
-    cardAddress: {
-
-        flex: 1,
-
-        marginLeft: 8,
-
-        color: Colors.gray,
-
-        fontSize: 15,
-
-        lineHeight: 22,
-
-    },
-
-    selectedBox: {
-
-        marginTop: 20,
-
-        backgroundColor: Colors.primary,
-
-        borderRadius: 15,
-
-        flexDirection: "row",
-
-        justifyContent: "center",
-
-        alignItems: "center",
-
-        paddingVertical: 10,
-
-    },
-
-    selectedText: {
-
-        color: "#fff",
-
-        marginLeft: 8,
-
-        fontWeight: "bold",
-
-        fontSize: 15,
-
-    },
-
-});
+            fontSize: 15,
+        },
+    });

@@ -42,8 +42,24 @@ import Colors from "../styles/colors";
 import BottomNav from "../components/BottomNav";
 import ProfileMenu from "../components/ProfileMenu";
 
+function esEstadoTerminado(
+    estado?: string | null
+): boolean {
+    return (
+        estado === "FINALIZADO" ||
+        estado === "AUSENTE" ||
+        estado === "CANCELADO"
+    );
+}
+
 export default function TurnoScreen() {
     const navigation = useNavigation<any>();
+
+    const irAlHistorial = () => {
+        navigation.navigate(
+            "HistorialTurnos"
+        );
+    };
     const [cancelando, setCancelando] =
         useState(false);
 
@@ -284,6 +300,12 @@ export default function TurnoScreen() {
                                         .fechaCancelacion,
                             });
 
+                            estadoAnterior.current =
+                                resultado.turno.estado;
+
+                            personasAvisadas.current =
+                                null;
+
                             Alert.alert(
                                 "Turno cancelado",
                                 resultado.mensaje
@@ -346,9 +368,28 @@ export default function TurnoScreen() {
                         !resultado.tieneTurno ||
                         !resultado.turno
                     ) {
-                        eliminarTurno();
-                        estadoAnterior.current = null;
-                        personasAvisadas.current = null;
+                        /*
+                        Si el turno que tenemos en pantalla ya terminó,
+                        lo conservamos localmente para que el ciudadano
+                        pueda ver el resultado: cancelado, ausente o
+                        atención finalizada.
+
+                        El turno solo se limpiará cuando el ciudadano
+                        seleccione Sedes desde el menú inferior.
+                        */
+                        if (
+                            !esEstadoTerminado(
+                                estadoAnterior.current
+                            )
+                        ) {
+                            eliminarTurno();
+                            estadoAnterior.current =
+                                null;
+                        }
+
+                        personasAvisadas.current =
+                            null;
+
                         return;
                     }
 
@@ -482,9 +523,9 @@ export default function TurnoScreen() {
         );
 
     const esTurnoFinalizado =
-        turno?.estado === "FINALIZADO" ||
-        turno?.estado === "AUSENTE" ||
-        turno?.estado === "CANCELADO";
+        esEstadoTerminado(
+            turno?.estado
+        );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -605,6 +646,32 @@ export default function TurnoScreen() {
                                     </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={
+                                    styles.historyButton
+                                }
+                                activeOpacity={0.8}
+                                onPress={
+                                    irAlHistorial
+                                }
+                            >
+                                <Ionicons
+                                    name="time-outline"
+                                    size={21}
+                                    color={
+                                        Colors.primary
+                                    }
+                                />
+
+                                <Text
+                                    style={
+                                        styles.historyButtonText
+                                    }
+                                >
+                                    Ver historial de turnos
+                                </Text>
+                            </TouchableOpacity>
                         </>
                     ) : (
                         <>
@@ -666,7 +733,7 @@ export default function TurnoScreen() {
                                 </Text>
                             </View>
 
-                            {turno.aviso && (
+                            {turno.aviso && !esTurnoFinalizado && (
                                 <View
                                     style={
                                         styles.noticeCard
@@ -1019,26 +1086,59 @@ export default function TurnoScreen() {
                             )}
 
                             {esTurnoFinalizado && (
-                                <TouchableOpacity
-                                    style={
-                                        styles.finishButton
-                                    }
-                                    onPress={() => {
-                                        eliminarTurno();
-
-                                        navigation.navigate(
-                                            "Sedes"
-                                        );
-                                    }}
-                                >
-                                    <Text
+                                <>
+                                    <View
                                         style={
-                                            styles.finishButtonText
+                                            styles.finishedInformation
                                         }
                                     >
-                                        Obtener otro turno
-                                    </Text>
-                                </TouchableOpacity>
+                                        <Ionicons
+                                            name="information-circle-outline"
+                                            size={20}
+                                            color="#60758A"
+                                        />
+
+                                        <Text
+                                            style={
+                                                styles.finishedInformationText
+                                            }
+                                        >
+                                            {turno.estado ===
+                                                "CANCELADO"
+                                                ? "Tu turno fue cancelado correctamente. Para solicitar un nuevo turno, selecciona Sedes en el menú inferior."
+                                                : turno.estado ===
+                                                    "AUSENTE"
+                                                    ? "Tu turno fue marcado como ausente. Para solicitar un nuevo turno, selecciona Sedes en el menú inferior."
+                                                    : "Tu atención fue finalizada correctamente. Si necesitas realizar otro trámite, selecciona Sedes en el menú inferior."}
+                                        </Text>
+                                    </View>
+
+                                    <TouchableOpacity
+                                        style={
+                                            styles.historyButton
+                                        }
+                                        activeOpacity={0.8}
+                                        onPress={
+                                            irAlHistorial
+                                        }
+                                    >
+                                        <Ionicons
+                                            name="time-outline"
+                                            size={21}
+                                            color={
+                                                Colors.primary
+                                            }
+                                        />
+
+                                        <Text
+                                            style={
+                                                styles.historyButtonText
+                                            }
+                                        >
+                                            Ver historial de turnos
+                                        </Text>
+                                    </TouchableOpacity>
+                                </>
                             )}
                         </>
                     )}
@@ -1371,19 +1471,24 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
 
-    finishButton: {
+    finishedInformation: {
         width: "100%",
         marginTop: 20,
-        paddingVertical: 15,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
         borderRadius: 14,
-        backgroundColor: Colors.primary,
-        alignItems: "center",
+        backgroundColor: "#EDF3F8",
+        flexDirection: "row",
+        alignItems: "flex-start",
     },
 
-    finishButtonText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "700",
+    finishedInformationText: {
+        flex: 1,
+        marginLeft: 9,
+        color: "#60758A",
+        fontSize: 13,
+        lineHeight: 19,
+        textAlign: "left",
     },
     cancelButton: {
         width: "100%",
@@ -1405,6 +1510,26 @@ const styles = StyleSheet.create({
         marginLeft: 8,
 
         color: "#C62828",
+        fontSize: 15,
+        fontWeight: "700",
+    },
+    historyButton: {
+        width: "100%",
+        marginTop: 18,
+        paddingVertical: 14,
+        paddingHorizontal: 18,
+        borderWidth: 1,
+        borderColor: Colors.primary,
+        borderRadius: 14,
+        backgroundColor: "#FFFFFF",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    historyButtonText: {
+        marginLeft: 8,
+        color: Colors.primary,
         fontSize: 15,
         fontWeight: "700",
     },

@@ -11,6 +11,7 @@ import TurnoScreen from "../screens/TurnoScreen"
 import { TurnoProvider } from "../screens/TurnoContext";
 import { UsuarioProvider } from "../screens/UsuarioContext";
 import ProfileScreen from "../screens/ProfileScreen";
+import HistorialTurnosScreen from "../screens/HistorialTurnosScreen";
 
 
 
@@ -73,6 +74,10 @@ export default function AppNavigator() {
                         <Stack.Screen
                             name="Profile"
                             component={ProfileScreen}
+                        />
+                        <Stack.Screen
+                            name="HistorialTurnos"
+                            component={HistorialTurnosScreen}
                         />
 
                     </Stack.Navigator>
