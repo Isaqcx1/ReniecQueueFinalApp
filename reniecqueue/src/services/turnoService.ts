@@ -252,3 +252,29 @@ export async function cancelarTurnoApi(
     return resultado;
 }
 
+interface SeguimientoPorIdRespuesta {
+    ok: boolean;
+    mensaje?: string;
+    turno: TurnoSeguimiento;
+}
+
+export async function obtenerSeguimientoTurnoPorIdApi(
+    idTurno: number
+): Promise<TurnoSeguimiento> {
+    const respuesta =
+        await fetch(
+            `${API_URL}/api/turnos/${idTurno}/seguimiento`
+        );
+
+    const resultado =
+        (await respuesta.json()) as SeguimientoPorIdRespuesta;
+
+    if (!respuesta.ok) {
+        throw new Error(
+            resultado.mensaje ||
+                "No se pudo consultar el turno."
+        );
+    }
+
+    return resultado.turno;
+}

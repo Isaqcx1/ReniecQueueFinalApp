@@ -141,17 +141,7 @@ export default function RequisitosScreen() {
 
             setModalVisible(false);
 
-            Alert.alert(
-                "Turno asignado",
-                `Tu turno ${turnoGenerado.codigoTurno} fue registrado correctamente.`,
-                [
-                    {
-                        text: "Ver mi turno",
-                        onPress: () =>
-                            navigation.navigate("Turno"),
-                    },
-                ]
-            );
+           
         } catch (error) {
             const mensaje =
                 error instanceof Error

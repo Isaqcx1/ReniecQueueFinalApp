@@ -141,109 +141,7 @@ export default function TurnoScreen() {
         };
     };
 
-    const mostrarAvisos = (
-        turnoApi: TurnoSeguimiento
-    ) => {
-        const estadoPrevio =
-            estadoAnterior.current;
-
-        /*
-        Avisos relacionados con la cantidad de
-        personas delante.
-        */
-        if (
-            turnoApi.estado === "EN_ESPERA" &&
-            turnoApi.personasDelante <= 2 &&
-            personasAvisadas.current !==
-            turnoApi.personasDelante
-        ) {
-            personasAvisadas.current =
-                turnoApi.personasDelante;
-
-            if (
-                turnoApi.personasDelante === 2
-            ) {
-                Alert.alert(
-                    "Tu turno está próximo",
-                    "Hay dos personas delante de ti. Mantente cerca de la sede."
-                );
-            }
-
-            if (
-                turnoApi.personasDelante === 1
-            ) {
-                Alert.alert(
-                    "Prepárate",
-                    "Hay una persona delante de ti. Serás el siguiente en ser llamado."
-                );
-            }
-
-            if (
-                turnoApi.personasDelante === 0
-            ) {
-                Alert.alert(
-                    "Eres el siguiente",
-                    "Mantente atento. Tu turno será llamado próximamente."
-                );
-            }
-        }
-
-        /*
-        Aviso principal cuando el asesor llama
-        al ciudadano.
-        */
-        if (
-            turnoApi.estado === "LLAMADO" &&
-            estadoPrevio !== "LLAMADO"
-        ) {
-            Alert.alert(
-                "¡Es tu turno!",
-                `Tu turno ${turnoApi.codigoTurno} ha sido llamado.\n\nDirígete a la ventanilla ${turnoApi.ventanilla ||
-                "asignada"
-                }.`
-            );
-        }
-
-        if (
-            turnoApi.estado ===
-            "EN_ATENCION" &&
-            estadoPrevio !==
-            "EN_ATENCION"
-        ) {
-            Alert.alert(
-                "Atención iniciada",
-                `Tu trámite está siendo atendido en la ventanilla ${turnoApi.ventanilla || ""
-                }.`
-            );
-        }
-
-        if (
-            turnoApi.estado ===
-            "FINALIZADO" &&
-            estadoPrevio !==
-            "FINALIZADO"
-        ) {
-            Alert.alert(
-                "Atención finalizada",
-                "Tu atención fue finalizada correctamente."
-            );
-        }
-
-        if (
-            turnoApi.estado === "AUSENTE" &&
-            estadoPrevio !== "AUSENTE"
-        ) {
-            Alert.alert(
-                "Turno marcado como ausente",
-                "No te presentaste cuando tu turno fue llamado."
-            );
-        }
-
-        estadoAnterior.current =
-            turnoApi.estado;
-    };
-
-
+    
     const manejarCancelarTurno = () => {
         if (!turno) {
             return;
@@ -393,9 +291,7 @@ export default function TurnoScreen() {
                         return;
                     }
 
-                    mostrarAvisos(
-                        resultado.turno
-                    );
+                  
 
                     actualizarTurno(
                         convertirTurno(
@@ -431,26 +327,7 @@ export default function TurnoScreen() {
             ]
         );
 
-    /*
-    Consulta el backend al entrar a la pantalla
-    y vuelve a consultar cada cinco segundos.
-    */
-    useFocusEffect(
-        useCallback(() => {
-            pantallaActiva.current = true;
-
-            cargarSeguimiento(true);
-
-            const intervalo = setInterval(() => {
-                cargarSeguimiento(false);
-            }, 5000);
-
-            return () => {
-                pantallaActiva.current = false;
-                clearInterval(intervalo);
-            };
-        }, [cargarSeguimiento])
-    );
+    
 
     const obtenerEstadoVisual = (
         estado: string
@@ -733,51 +610,7 @@ export default function TurnoScreen() {
                                 </Text>
                             </View>
 
-                            {turno.aviso && !esTurnoFinalizado && (
-                                <View
-                                    style={
-                                        styles.noticeCard
-                                    }
-                                >
-                                    <Ionicons
-                                        name="notifications-outline"
-                                        size={24}
-                                        color={
-                                            Colors.primary
-                                        }
-                                    />
 
-                                    <View
-                                        style={
-                                            styles.noticeContent
-                                        }
-                                    >
-                                        <Text
-                                            style={
-                                                styles.noticeTitle
-                                            }
-                                        >
-                                            {
-                                                turno
-                                                    .aviso
-                                                    .titulo
-                                            }
-                                        </Text>
-
-                                        <Text
-                                            style={
-                                                styles.noticeMessage
-                                            }
-                                        >
-                                            {
-                                                turno
-                                                    .aviso
-                                                    .mensaje
-                                            }
-                                        </Text>
-                                    </View>
-                                </View>
-                            )}
 
                             <View style={styles.ticket}>
                                 <View
@@ -1302,33 +1135,13 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
 
-    noticeCard: {
-        width: "100%",
-        marginTop: 20,
-        padding: 16,
-        borderRadius: 15,
-        backgroundColor: "#EAF4FF",
-        flexDirection: "row",
-        alignItems: "flex-start",
-    },
 
-    noticeContent: {
-        flex: 1,
-        marginLeft: 12,
-    },
 
-    noticeTitle: {
-        color: Colors.primary,
-        fontWeight: "700",
-        fontSize: 16,
-    },
 
-    noticeMessage: {
-        color: "#536779",
-        fontSize: 14,
-        lineHeight: 20,
-        marginTop: 4,
-    },
+
+
+
+
 
     ticket: {
         width: "100%",
