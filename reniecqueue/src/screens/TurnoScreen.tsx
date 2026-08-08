@@ -32,11 +32,11 @@ import { useTurno } from "./TurnoContext";
 
 import {
     obtenerTurnoActivoApi,
-} from "../services/turnoService";
-
-import type {
+    cancelarTurnoApi,
     TurnoSeguimiento,
 } from "../services/turnoService";
+
+
 
 import Colors from "../styles/colors";
 import BottomNav from "../components/BottomNav";
@@ -44,6 +44,8 @@ import ProfileMenu from "../components/ProfileMenu";
 
 export default function TurnoScreen() {
     const navigation = useNavigation<any>();
+    const [cancelando, setCancelando] =
+        useState(false);
 
     const {
         usuario,
@@ -137,7 +139,7 @@ export default function TurnoScreen() {
             turnoApi.estado === "EN_ESPERA" &&
             turnoApi.personasDelante <= 2 &&
             personasAvisadas.current !==
-                turnoApi.personasDelante
+            turnoApi.personasDelante
         ) {
             personasAvisadas.current =
                 turnoApi.personasDelante;
@@ -180,32 +182,30 @@ export default function TurnoScreen() {
         ) {
             Alert.alert(
                 "¡Es tu turno!",
-                `Tu turno ${turnoApi.codigoTurno} ha sido llamado.\n\nDirígete a la ventanilla ${
-                    turnoApi.ventanilla ||
-                    "asignada"
+                `Tu turno ${turnoApi.codigoTurno} ha sido llamado.\n\nDirígete a la ventanilla ${turnoApi.ventanilla ||
+                "asignada"
                 }.`
             );
         }
 
         if (
             turnoApi.estado ===
-                "EN_ATENCION" &&
+            "EN_ATENCION" &&
             estadoPrevio !==
-                "EN_ATENCION"
+            "EN_ATENCION"
         ) {
             Alert.alert(
                 "Atención iniciada",
-                `Tu trámite está siendo atendido en la ventanilla ${
-                    turnoApi.ventanilla || ""
+                `Tu trámite está siendo atendido en la ventanilla ${turnoApi.ventanilla || ""
                 }.`
             );
         }
 
         if (
             turnoApi.estado ===
-                "FINALIZADO" &&
+            "FINALIZADO" &&
             estadoPrevio !==
-                "FINALIZADO"
+            "FINALIZADO"
         ) {
             Alert.alert(
                 "Atención finalizada",
@@ -225,6 +225,88 @@ export default function TurnoScreen() {
 
         estadoAnterior.current =
             turnoApi.estado;
+    };
+
+
+    const manejarCancelarTurno = () => {
+        if (!turno) {
+            return;
+        }
+
+        if (!usuario?.dni) {
+            Alert.alert(
+                "Error",
+                "No se encontró el DNI del usuario."
+            );
+
+            return;
+        }
+
+        if (turno.estado !== "EN_ESPERA") {
+            Alert.alert(
+                "No disponible",
+                "Este turno ya no puede ser cancelado."
+            );
+
+            return;
+        }
+
+        Alert.alert(
+            "Cancelar turno",
+            `¿Estás seguro de cancelar tu turno ${turno.numero}?`,
+            [
+                {
+                    text: "No",
+                    style: "cancel",
+                },
+
+                {
+                    text: "Sí, cancelar",
+                    style: "destructive",
+
+                    onPress: async () => {
+                        try {
+                            setCancelando(true);
+
+                            const resultado =
+                                await cancelarTurnoApi(
+                                    turno.idTurno,
+                                    usuario.dni
+                                );
+
+                            actualizarTurno({
+                                ...turno,
+                                estado:
+                                    resultado.turno.estado,
+
+                                fechaFinalizacion:
+                                    resultado.turno
+                                        .fechaCancelacion,
+                            });
+
+                            Alert.alert(
+                                "Turno cancelado",
+                                resultado.mensaje
+                            );
+                        } catch (error) {
+                            console.error(
+                                "Error al cancelar turno:",
+                                error
+                            );
+
+                            Alert.alert(
+                                "No se pudo cancelar",
+                                error instanceof Error
+                                    ? error.message
+                                    : "Ocurrió un error al cancelar el turno."
+                            );
+                        } finally {
+                            setCancelando(false);
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     const cargarSeguimiento =
@@ -740,107 +822,133 @@ export default function TurnoScreen() {
 
                                 {turno.estado ===
                                     "EN_ESPERA" && (
-                                    <View
-                                        style={
-                                            styles.queueInformation
-                                        }
+                                        <View
+                                            style={
+                                                styles.queueInformation
+                                            }
+                                        >
+
+                                            <View
+                                                style={
+                                                    styles.queueBox
+                                                }
+                                            >
+                                                <Ionicons
+                                                    name="people-outline"
+                                                    size={25}
+                                                    color={
+                                                        Colors.primary
+                                                    }
+                                                />
+
+                                                <Text
+                                                    style={
+                                                        styles.queueNumber
+                                                    }
+                                                >
+                                                    {
+                                                        turno.personasEspera
+                                                    }
+                                                </Text>
+
+                                                <Text
+                                                    style={
+                                                        styles.queueLabel
+                                                    }
+                                                >
+                                                    Personas
+                                                    delante
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={
+                                                    styles.queueBox
+                                                }
+                                            >
+                                                <Ionicons
+                                                    name="time-outline"
+                                                    size={25}
+                                                    color={
+                                                        Colors.primary
+                                                    }
+                                                />
+
+                                                <Text
+                                                    style={
+                                                        styles.queueNumber
+                                                    }
+                                                >
+                                                    {
+                                                        turno.tiempoEstimado
+                                                    }
+                                                </Text>
+
+
+                                                <Text
+                                                    style={
+                                                        styles.queueLabel
+                                                    }
+                                                >
+                                                    Minutos
+                                                    estimados
+                                                </Text>
+
+                                            </View>
+
+                                        </View>
+
+                                    )}
+
+                                {turno.estado === "EN_ESPERA" && (
+                                    <TouchableOpacity
+                                        style={styles.cancelButton}
+                                        onPress={manejarCancelarTurno}
+                                        disabled={cancelando}
+                                        activeOpacity={0.8}
                                     >
-                                        <View
-                                            style={
-                                                styles.queueBox
-                                            }
-                                        >
-                                            <Ionicons
-                                                name="people-outline"
-                                                size={25}
-                                                color={
-                                                    Colors.primary
-                                                }
-                                            />
+                                        <Ionicons
+                                            name="close-circle-outline"
+                                            size={20}
+                                            color="#C62828"
+                                        />
 
-                                            <Text
-                                                style={
-                                                    styles.queueNumber
-                                                }
-                                            >
-                                                {
-                                                    turno.personasEspera
-                                                }
-                                            </Text>
-
-                                            <Text
-                                                style={
-                                                    styles.queueLabel
-                                                }
-                                            >
-                                                Personas
-                                                delante
-                                            </Text>
-                                        </View>
-
-                                        <View
-                                            style={
-                                                styles.queueBox
-                                            }
-                                        >
-                                            <Ionicons
-                                                name="time-outline"
-                                                size={25}
-                                                color={
-                                                    Colors.primary
-                                                }
-                                            />
-
-                                            <Text
-                                                style={
-                                                    styles.queueNumber
-                                                }
-                                            >
-                                                {
-                                                    turno.tiempoEstimado
-                                                }
-                                            </Text>
-
-                                            <Text
-                                                style={
-                                                    styles.queueLabel
-                                                }
-                                            >
-                                                Minutos
-                                                estimados
-                                            </Text>
-                                        </View>
-                                    </View>
+                                        <Text style={styles.cancelButtonText}>
+                                            {cancelando
+                                                ? "Cancelando..."
+                                                : "Cancelar turno"}
+                                        </Text>
+                                    </TouchableOpacity>
                                 )}
 
                                 {(turno.estado ===
                                     "LLAMADO" ||
                                     turno.estado ===
-                                        "EN_ATENCION") && (
-                                    <View
-                                        style={
-                                            styles.windowCard
-                                        }
-                                    >
-                                        <Text
+                                    "EN_ATENCION") && (
+                                        <View
                                             style={
-                                                styles.windowLabel
+                                                styles.windowCard
                                             }
                                         >
-                                            Dirígete a la
-                                            ventanilla
-                                        </Text>
+                                            <Text
+                                                style={
+                                                    styles.windowLabel
+                                                }
+                                            >
+                                                Dirígete a la
+                                                ventanilla
+                                            </Text>
 
-                                        <Text
-                                            style={
-                                                styles.windowNumber
-                                            }
-                                        >
-                                            {turno.ventanilla ||
-                                                "--"}
-                                        </Text>
-                                    </View>
-                                )}
+                                            <Text
+                                                style={
+                                                    styles.windowNumber
+                                                }
+                                            >
+                                                {turno.ventanilla ||
+                                                    "--"}
+                                            </Text>
+                                        </View>
+                                    )}
                             </View>
 
                             {errorSeguimiento ? (
@@ -905,7 +1013,9 @@ export default function TurnoScreen() {
                                             ? "Actualizando..."
                                             : "Actualizar turno"}
                                     </Text>
+
                                 </TouchableOpacity>
+
                             )}
 
                             {esTurnoFinalizado && (
@@ -1273,6 +1383,29 @@ const styles = StyleSheet.create({
     finishButtonText: {
         color: "#FFFFFF",
         fontSize: 16,
+        fontWeight: "700",
+    },
+    cancelButton: {
+        width: "100%",
+        marginTop: 16,
+        paddingVertical: 14,
+
+        borderWidth: 1,
+        borderColor: "#C62828",
+        borderRadius: 14,
+
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+
+        backgroundColor: "#FFFFFF",
+    },
+
+    cancelButtonText: {
+        marginLeft: 8,
+
+        color: "#C62828",
+        fontSize: 15,
         fontWeight: "700",
     },
 });

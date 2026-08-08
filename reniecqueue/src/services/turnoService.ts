@@ -114,6 +114,21 @@ export interface SeguimientoTurnoRespuesta {
     turno: TurnoSeguimiento | null;
 }
 
+export interface CancelarTurnoRespuesta {
+    ok: boolean;
+    mensaje: string;
+
+    turno: {
+        idTurno: number;
+        codigoTurno: string;
+        estado: string;
+        sede: string;
+        tramite: string;
+        fechaRegistro: string;
+        fechaCancelacion: string;
+    };
+}
+
 export async function obtenerTurnoActivoApi(
     dni: string
 ): Promise<SeguimientoTurnoRespuesta> {
@@ -136,6 +151,38 @@ export async function obtenerTurnoActivoApi(
         throw new Error(
             resultado.mensaje ||
                 "No se pudo consultar el turno."
+        );
+    }
+
+    return resultado;
+}
+
+export async function cancelarTurnoApi(
+    idTurno: number,
+    dni: string
+): Promise<CancelarTurnoRespuesta> {
+    const respuesta = await fetch(
+        `${API_URL}/api/turnos/${idTurno}/cancelar`,
+        {
+            method: "PATCH",
+
+            headers: {
+                "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+                dni,
+            }),
+        }
+    );
+
+    const resultado =
+        (await respuesta.json()) as CancelarTurnoRespuesta;
+
+    if (!respuesta.ok) {
+        throw new Error(
+            resultado.mensaje ||
+                "No se pudo cancelar el turno."
         );
     }
 
