@@ -17,19 +17,32 @@ import { asignarTurnoApi } from "../services/turnoService";
 
 export default function RequisitosScreen() {
     const navigation = useNavigation<any>();
-    const { cerrarSesion } = useUsuario();
-    const { eliminarTurno } = useTurno();
-    const { usuario } = useUsuario();
+
+    const {
+        usuario,
+        cerrarSesion,
+    } = useUsuario();
+
+    const {
+        tieneTurnoActivo,
+        registrarTurno,
+        eliminarTurno,
+    } = useTurno();
+
     const [registrando, setRegistrando] =
         useState(false);
+
     const route = useRoute<any>();
     const { sede, tramite } = route.params;
-    const [menuVisible, setMenuVisible] = useState(false);
 
-    const [modalVisible, setModalVisible] = useState(false);
-    const [alertVisible, setAlertVisible] = useState(false);
+    const [menuVisible, setMenuVisible] =
+        useState(false);
 
-    const { turno, registrarTurno } = useTurno();
+    const [modalVisible, setModalVisible] =
+        useState(false);
+
+    const [alertVisible, setAlertVisible] =
+        useState(false);
 
     const personasCola = 18;
 
@@ -98,16 +111,7 @@ export default function RequisitosScreen() {
             return;
         }
 
-        const estadosActivos = [
-            "EN_ESPERA",
-            "LLAMADO",
-            "EN_ATENCION",
-        ];
-
-        if (
-            turno &&
-            estadosActivos.includes(turno.estado)
-        ) {
+        if (tieneTurnoActivo) {
             Alert.alert(
                 "Turno activo",
                 "Ya estás registrado en una cola virtual y tienes un turno activo."
@@ -269,19 +273,18 @@ export default function RequisitosScreen() {
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity activeOpacity={0.9} style={styles.button} onPress={() => {
+                        <TouchableOpacity
+                            activeOpacity={0.9}
+                            style={styles.button}
+                            onPress={() => {
+                                if (tieneTurnoActivo) {
+                                    setAlertVisible(true);
+                                    return;
+                                }
 
-                            if (turno) {
-
-                                setAlertVisible(true);
-
-                                return;
-
-                            }
-
-                            setModalVisible(true);
-
-                        }}>
+                                setModalVisible(true);
+                            }}
+                        >
                             <LinearGradient colors={[Colors.primary, Colors.secondary]} style={styles.gradient}>
                                 <Ionicons name="people-outline" size={24} color="#fff" />
                                 <Text style={styles.buttonText}>Registrarme en la cola</Text>

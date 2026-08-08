@@ -363,46 +363,43 @@ export default function HistorialTurnosScreen() {
                     </View>
                 </View>
 
-                {item.asesor && (
-                    <View
-                        style={
-                            styles.informationRow
-                        }
-                    >
+                {item.estado === "CANCELADO" ? (
+                    <View style={styles.informationRow}>
                         <Ionicons
-                            name="person-outline"
+                            name="close-circle-outline"
                             size={20}
-                            color={
-                                Colors.primary
-                            }
+                            color={Colors.primary}
                         />
 
-                        <View
-                            style={
-                                styles.information
-                            }
-                        >
-                            <Text
-                                style={
-                                    styles.label
-                                }
-                            >
-                                Asesor
+                        <View style={styles.information}>
+                            <Text style={styles.label}>
+                                Motivo
                             </Text>
 
-                            <Text
-                                style={
-                                    styles.value
-                                }
-                            >
-                                {
-                                    item.asesor
-                                        .nombreCompleto
-                                }
+                            <Text style={styles.value}>
+                                Cancelado por el ciudadano
                             </Text>
                         </View>
                     </View>
-                )}
+                ) : item.asesor ? (
+                    <View style={styles.informationRow}>
+                        <Ionicons
+                            name="person-outline"
+                            size={20}
+                            color={Colors.primary}
+                        />
+
+                        <View style={styles.information}>
+                            <Text style={styles.label}>
+                                Asesor
+                            </Text>
+
+                            <Text style={styles.value}>
+                                {item.asesor.nombreCompleto}
+                            </Text>
+                        </View>
+                    </View>
+                ) : null}
             </View>
         );
     };
@@ -548,8 +545,8 @@ export default function HistorialTurnosScreen() {
                         styles.list,
 
                         historial.length ===
-                            0 &&
-                            styles.emptyList,
+                        0 &&
+                        styles.emptyList,
                     ]}
                     showsVerticalScrollIndicator={
                         false

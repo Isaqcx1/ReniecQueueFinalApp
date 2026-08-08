@@ -1,24 +1,25 @@
 import React from "react";
 
 import {
-    Alert,
     View,
     TouchableOpacity,
     Text,
     StyleSheet,
 } from "react-native";
 
-import { Ionicons } from "@expo/vector-icons";
-
-import { LinearGradient } from "expo-linear-gradient";
-
-import { useNavigation } from "@react-navigation/native";
-
-import Colors from "../styles/colors";
+import {
+    Ionicons,
+} from "@expo/vector-icons";
 
 import {
-    useTurno,
-} from "../screens/TurnoContext";
+    LinearGradient,
+} from "expo-linear-gradient";
+
+import {
+    useNavigation,
+} from "@react-navigation/native";
+
+import Colors from "../styles/colors";
 
 interface Props {
     active:
@@ -37,39 +38,6 @@ export default function BottomNav({
 }: Props) {
     const navigation =
         useNavigation<any>();
-
-    const {
-        
-        tieneTurnoActivo,
-    } = useTurno();
-
-    const navegar = (
-        name:
-            | "Inicio"
-            | "Sedes"
-            | "Turno",
-        screen: string
-    ) => {
-        /*
-        Mientras el turno siga activo,
-        no permitimos volver a Sedes.
-        */
-        if (
-            name === "Sedes" &&
-            tieneTurnoActivo
-        ) {
-            Alert.alert(
-                "Turno activo",
-                "Ya tienes un turno activo. Debes esperar a que finalice antes de solicitar otro turno."
-            );
-
-            return;
-        }
-
-       
-
-        navigation.navigate(screen);
-    };
 
     const Item = (
         name:
@@ -127,11 +95,12 @@ export default function BottomNav({
 
         return (
             <TouchableOpacity
-                style={styles.button}
+                style={
+                    styles.button
+                }
                 activeOpacity={0.8}
                 onPress={() =>
-                    navegar(
-                        name,
+                    navigation.navigate(
                         screen
                     )
                 }
@@ -139,11 +108,15 @@ export default function BottomNav({
                 <Ionicons
                     name={icon}
                     size={22}
-                    color={Colors.gray}
+                    color={
+                        Colors.gray
+                    }
                 />
 
                 <Text
-                    style={styles.text}
+                    style={
+                        styles.text
+                    }
                 >
                     {name}
                 </Text>
@@ -152,7 +125,11 @@ export default function BottomNav({
     };
 
     return (
-        <View style={styles.container}>
+        <View
+            style={
+                styles.container
+            }
+        >
             {Item(
                 "Inicio",
                 "home",
@@ -185,24 +162,30 @@ const styles =
 
             right: 18,
 
-            backgroundColor: "#fff",
+            backgroundColor:
+                "#fff",
 
             borderRadius: 25,
 
-            flexDirection: "row",
+            flexDirection:
+                "row",
 
             justifyContent:
                 "space-around",
 
-            alignItems: "center",
+            alignItems:
+                "center",
 
-            paddingVertical: 12,
+            paddingVertical:
+                12,
 
             elevation: 12,
 
-            shadowColor: "#000",
+            shadowColor:
+                "#000",
 
-            shadowOpacity: 0.12,
+            shadowOpacity:
+                0.12,
 
             shadowRadius: 12,
 
@@ -215,12 +198,14 @@ const styles =
         button: {
             width: 90,
 
-            alignItems: "center",
+            alignItems:
+                "center",
 
             justifyContent:
                 "center",
 
-            paddingVertical: 8,
+            paddingVertical:
+                8,
         },
 
         activeItem: {
@@ -232,7 +217,8 @@ const styles =
 
             marginTop: 4,
 
-            fontWeight: "bold",
+            fontWeight:
+                "bold",
 
             fontSize: 13,
         },
@@ -240,10 +226,12 @@ const styles =
         text: {
             marginTop: 4,
 
-            color: Colors.gray,
+            color:
+                Colors.gray,
 
             fontSize: 13,
 
-            fontWeight: "600",
+            fontWeight:
+                "600",
         },
     });
